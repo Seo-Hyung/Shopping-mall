@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,70 @@
   <title>쇼핑몰!</title>
   <link rel="stylesheet" href="./index.scss">
 </head>
+
 <body>
   <!-- 템플릿을 이곳에 작성해주세요 -->
+  <h1>메인 페이지</h1>
+  <!-- 로그인 폼 -->
+  <template id="login-form">
+    <form class="login-form">
+      <input type="text" name="username">
+      <input type="password" name="password">
+      <button class="login-button">로그인</button>
+    </form>
+    <button class="register-button">회원가입</button>
+  </template>
 
+  <!-- 상품 리스트 -->
+  <template id="product-list-form">
+    <ul class="category">
+      <li class="top">top</li>
+      <li class="pants">pants</li>
+    </ul>
+    <table class="product-list-form">
+      <thead></thead>
+      <tbody class="product-list">
+      </tbody>
+    </table>
+  </template>
+
+  <!-- 상품 하나 -->
+  <template id="product-form">
+    <div class="product-form">
+      <span class="title"></span>
+      <span class="description"></span>
+      <img class="image" src="#" alt="">
+    </div>
+  </template>
+
+  <!-- 회원가입 -->
+  <template id="user-register-form">
+    <form class="user-register-form">
+      Name: <input type="text" name="newname">
+      <button>아이디 중복 확인</button><br>
+      Password: <input type="text" name="newpassword"><br>
+      <button class="register-submit-button">가입완료</button>
+    </form>
+  </template>
+
+  <!-- 회원가입 성공 -->
+  <template id="register-success-form">
+    <h1 class="welcome"></h1>
+    <button class="continue-button">쇼핑 계속 하기</button>
+  </template>
+
+  <!-- 마이 페이지 폼 -->
+  <template id="my-page-form">
+    <div>
+      <span class="hello"></span>
+      <button class="go-to-cart">장바구니</button>
+      <button class="edit-info">회원정보 변경</button>
+    </div>
+  </template>
+
+  <!-- 본문 -->
   <div class="root"></div>
   <script src="./index.js"></script>
 </body>
+
 </html>
