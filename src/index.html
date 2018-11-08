@@ -25,6 +25,7 @@
   <!-- 상품 리스트 -->
   <template id="product-list-form">
     <ul class="category">
+      <li class="all">ALL</li>
       <li class="top">top</li>
       <li class="pants">pants</li>
     </ul>
@@ -39,9 +40,35 @@
   <template id="product-form">
     <div class="product-form">
       <span class="title"></span>
-      <span class="description"></span>
       <img class="image" src="#" alt="">
     </div>
+  </template>
+
+  <template id="product-detail">
+    <div class="product-detail">
+      <span class="title"></span><br>
+      <img class="image" src="#" alt=""><br>
+      <span class="description"></span><br>
+      <form action="" class="product-option-form" name = "add-to-cart-form">
+        <label>
+          옵션 선택 :
+          <select name="options" class="option-list">
+          </select>
+        </label>
+        <label>
+            수량 선택 :
+            <input type="number" class="quantity" placeholder="1" min="1" max="10">
+          </label>
+        <button class="add-to-cart">장바구니에 담기</button>
+      </form>
+      <br><br>상품 자세히 보기<br><br>
+      <img src="#" alt="" class="detail-image">
+      <button class="back">뒤로</button>
+    </div>
+  </template>
+
+  <template id="product-option-form">
+    <option value="" class="option"></option>
   </template>
 
   <!-- 회원가입 -->
@@ -64,6 +91,7 @@
   <template id="my-page-form">
     <div>
       <span class="hello"></span>
+      <button class="logout">로그아웃</button>
       <button class="go-to-cart">장바구니</button>
       <button class="edit-info">회원정보 변경</button>
     </div>
