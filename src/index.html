@@ -1,105 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Mall Clone Project</title>
+    <link rel="stylesheet" href="./index.scss" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>쇼핑몰!</title>
-  <link rel="stylesheet" href="./index.scss">
-</head>
+  <body>
+    <template id="title-form">
+      <div class="title-form">
+        <h1 class="shopping-mall-title">anglo-italian</h1>
+      </div>
+    </template>
 
-<body>
-  <!-- 템플릿을 이곳에 작성해주세요 -->
-  <h1>메인 페이지</h1>
-  <!-- 로그인 폼 -->
-  <template id="login-form">
-    <form class="login-form">
-      <input type="text" name="username">
-      <input type="password" name="password">
-      <button class="login-button">로그인</button>
-    </form>
-    <button class="register-button">회원가입</button>
-  </template>
-
-  <!-- 상품 리스트 -->
-  <template id="product-list-form">
-    <ul class="category">
-      <li class="all">ALL</li>
-      <li class="top">top</li>
-      <li class="pants">pants</li>
-    </ul>
-    <table class="product-list-form">
-      <thead></thead>
-      <tbody class="product-list">
-      </tbody>
-    </table>
-  </template>
-
-  <!-- 상품 하나 -->
-  <template id="product-form">
-    <div class="product-form">
-      <span class="title"></span>
-      <img class="image" src="#" alt="">
-    </div>
-  </template>
-
-  <template id="product-detail">
-    <div class="product-detail">
-      <span class="title"></span><br>
-      <img class="image" src="#" alt=""><br>
-      <span class="description"></span><br>
-      <form action="" class="product-option-form" name = "add-to-cart-form">
-        <label>
-          옵션 선택 :
-          <select name="options" class="option-list">
-          </select>
-        </label>
-        <label>
-            수량 선택 :
-            <input type="number" class="quantity" placeholder="1" min="1" max="10">
-          </label>
-        <button class="add-to-cart">장바구니에 담기</button>
+    <!-- 로그인 폼 -->
+    <template id="login-form">
+      <form class="login-form">
+        <input type="text" name="username" />
+        <input type="password" name="password" />
+        <button class="login-button">로그인</button>
+        <button type="button" class="register-button">회원가입</button>
       </form>
-      <br><br>상품 자세히 보기<br><br>
-      <img src="#" alt="" class="detail-image">
-      <button class="back">뒤로</button>
-    </div>
-  </template>
+    </template>
 
-  <template id="product-option-form">
-    <option value="" class="option"></option>
-  </template>
+    <!-- 상품 리스트 -->
+    <template id="product-list-form">
+      <ul class="category">
+        <li class="all">ALL</li>
+        <li class="pants">pants</li>
+        <li class="scarf">scarf</li>
+        <li class="shirts">shirts</li>
+      </ul>
+      <div class="product-list-form"><div class="product-list"></div></div>
+    </template>
 
-  <!-- 회원가입 -->
-  <template id="user-register-form">
-    <form class="user-register-form">
-      Name: <input type="text" name="newname">
-      <button>아이디 중복 확인</button><br>
-      Password: <input type="text" name="newpassword"><br>
-      <button class="register-submit-button">가입완료</button>
-    </form>
-  </template>
+    <!-- 상품 하나 -->
+    <template id="product-form">
+      <div class="product-form"><img class="image" src="#" alt="" /></div>
+    </template>
 
-  <!-- 회원가입 성공 -->
-  <template id="register-success-form">
-    <h1 class="welcome"></h1>
-    <button class="continue-button">쇼핑 계속 하기</button>
-  </template>
+    <template id="product-detail">
+      <div class="product-detail">
+        <img class="detail-image" src="#" alt="" /><br />
+        <div class="detail-info">
+          <span class="title"></span><br />
+          <form action="" class="product-option-form" name="add-to-cart-form">
+            <label>
+              옵션 선택 :
+              <select name="options" class="option-list" required>
+                <option value="" disabled selected hidden
+                  >옵션을 선택하세요.</option
+                >
+              </select>
+            </label><br>
+            <label>
+              수량 선택 :
+              <input
+                type="number"
+                class="quantity"
+                name="quantity"
+                placeholder="1"
+                min="1"
+                max="100"
+                value="1"
+              />
+            </label><br>
+            <button class="add-to-cart">장바구니에 담기</button><br>
 
-  <!-- 마이 페이지 폼 -->
-  <template id="my-page-form">
-    <div>
-      <span class="hello"></span>
-      <button class="logout">로그아웃</button>
-      <button class="go-to-cart">장바구니</button>
-      <button class="edit-info">회원정보 변경</button>
-    </div>
-  </template>
+          <span class="description"></span><br />
+          </form>
+          <button class="back">다른 상품 보기</button>
+        </div>
+      </div>
+    </template>
 
-  <!-- 본문 -->
-  <div class="root"></div>
-  <script src="./index.js"></script>
-</body>
+    <!-- 상품 옵션 아이템 -->
+    <template id="product-option-form">
+      <option value="" class="option"></option>
+    </template>
 
+    <!-- 장바구니 -->
+    <template id="cart-form">
+      <h1>your bag</h1>
+      <ul class="cart-form">
+
+      </ul>
+      <button class="order-button">주문하기</button>
+      <button class="delete">선택 삭제</button>
+    </template>
+
+    <!-- 장바구니 아이템 -->
+    <template id="cart-item">
+      <li class="cart-item">
+        <input class="check-delete" type="checkbox" checked>
+        <img class="image" src="#" alt="" />
+        <span class="title"></span>
+        <span class="option"></span>
+        <span class="price"></span>
+        <span class="quantity"></span>
+      </li>
+    </template>
+
+    <!-- 주문 내역 -->
+    <template id="ordered-form">
+        <h1>your bag</h1>
+      <ul class="ordered-form">
+      </ul>
+    </template>
+
+    <template id="ordered-form-item">
+      <li class="order-form-item">
+          주문번호 : <span class="order-id"></span><br>
+          주문시간 : <span class="order-time"></span>
+      </li>
+    </template>
+
+    <!-- 회원가입 -->
+    <template id="user-register-form">
+      <form class="user-register-form">
+        Name: <input type="text" name="newname" />
+        <button>아이디 중복 확인</button><br />
+        Password: <input type="text" name="newpassword" /><br />
+        <button class="register-submit-button">가입완료</button>
+      </form>
+    </template>
+
+    <!-- 회원가입 성공 -->
+    <template id="register-success-form">
+      <h1 class="welcome"></h1>
+      <button class="continue-button">쇼핑 계속 하기</button>
+    </template>
+
+    <!-- 마이 페이지 폼 -->
+    <template id="my-page-form">
+      <div class="my-page-form">
+        <span class="hello"></span> <button class="logout">로그아웃</button>
+        <button class="go-to-cart">장바구니</button>
+        <button class="ordered-list">주문내역 보기</button>
+      </div>
+    </template>
+
+    <!-- 본문 -->
+    <main class="main">
+      <div class="header"><!-- 타이틀& 로그인폼 --></div>
+      <div class="root"><!-- 나머지 --></div>
+    </main>
+    <script src="./index.js"></script>
+  </body>
 </html>
