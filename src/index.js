@@ -75,19 +75,18 @@ async function drawProductList(productData) {
   const fragment = document.importNode(templates.productListForm, true);
   // const fragment2 = document.importNode(templates.productForm, true);
   const productListEl = fragment.querySelector(".product-list");
+  const categoryLists = fragment.querySelectorAll("li");
   const scarfEl = fragment.querySelector(".scarf");
   const pantsEl = fragment.querySelector(".pants");
+  const shirtsEl = fragment.querySelector(".shirts");
+  const knitwearEl = fragment.querySelector(".knitwear");
   const allEl = fragment.querySelector(".all");
 
   // 상품 화면에 그리기
   for (const product of productData) {
     const fragment = document.importNode(templates.productForm, true);
     const productForm = fragment.querySelector(".product-form");
-    // const titleEl = fragment.querySelector(".title");
-    // const descriptionEl = fragment.querySelector(".description");
     const imageEl = fragment.querySelector(".image");
-    // titleEl.textContent = product.title;
-    // descriptionEl.textContent = product.description;
     imageEl.src = product.mainImgUrl;
     let postId = product.id;
 
@@ -102,15 +101,14 @@ async function drawProductList(productData) {
   allEl.addEventListener("click", async e => {
     e.preventDefault();
     const res = await api.get("/products");
-
     const productData = res.data;
-    // drawProductList(productData);
     drawScreen(productData);
   });
 
-  // top
+  // scarf
   scarfEl.addEventListener("click", async e => {
     e.preventDefault();
+
     const res = await api.get("/products", {
       params: {
         category: "scarf"
@@ -120,9 +118,23 @@ async function drawProductList(productData) {
     drawScreen(productData);
   });
 
+  // shirts
+  shirtsEl.addEventListener("click", async e => {
+    e.preventDefault();
+
+    const res = await api.get("/products", {
+      params: {
+        category: "shirts"
+      }
+    });
+    const productData = res.data;
+    drawScreen(productData);
+  });
+
   // pants
   pantsEl.addEventListener("click", async e => {
     e.preventDefault();
+    pantsEl.classList.add('category-clicked');
     const res = await api.get("/products", {
       params: {
         category: "pants"
@@ -132,6 +144,20 @@ async function drawProductList(productData) {
 
     drawScreen(productData);
   });
+// knitwear
+knitwearEl.addEventListener("click", async e => {
+  e.preventDefault();
+  knitwearEl.classList.add('category-clicked');
+  const res = await api.get("/products", {
+    params: {
+      category: "knitwear"
+    }
+  });
+  const productData = res.data;
+
+  drawScreen(productData);
+});
+
 
   // 문서 삽입
   rootEl.textContent = "";
@@ -192,7 +218,7 @@ async function drawProductDetail(postId) {
 // 장바구니 그리기
 async function drawCartForm() {
   const fragment = document.importNode(templates.cartForm, true);
-  const cartFormEl = fragment.querySelector(".cart-form");
+  const cartFormEl = fragment.querySelector(".cart-form-ul");
   const orderButton = fragment.querySelector(".order-button");
   const deleteButton = fragment.querySelector(".delete");
 
@@ -205,7 +231,7 @@ async function drawCartForm() {
   const res = await api.get("/cartItems", {
     params: {
       ordered: false,
-      userId: +userRes.data[0].id,
+      userId: userRes.data[0].id,
       _expand: "option"
     }
   });
@@ -293,7 +319,7 @@ async function drawCartForm() {
 // 주문내역 그리기
 async function drawOrderedForm() {
   const fragment = document.importNode(templates.orderedForm, true);
-  const orderedForm = fragment.querySelector(".ordered-form");
+  const orderedForm = fragment.querySelector(".ordered-form-ul");
 
   const res = await api.get("/orders");
   const orderedList = res.data;
