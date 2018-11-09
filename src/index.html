@@ -18,10 +18,10 @@
     <!-- 로그인 폼 -->
     <template id="login-form">
       <form class="login-form">
-        <input type="text" name="username" />
-        <input type="password" name="password" />
-        <button class="login-button">로그인</button>
-        <button type="button" class="register-button">회원가입</button>
+        <input type="text" name="username" placeholder="ID" required/>
+        <input type="password" name="password" placeholder="PASSWORD" required/>
+        <button class="login-button">Sign in</button>
+        <button type="button" class="register-button">Sign up</button>
       </form>
     </template>
 
@@ -33,6 +33,7 @@
         <li class="scarf">scarf</li>
         <li class="shirts">shirts</li>
         <li class="knitwear">knitwear</li>
+        <li class="outerwear">outerwear</li>
       </ul>
       <div class="product-list-form">
         <div class="product-list">
@@ -67,11 +68,11 @@
               quantity :
               <input type="number" class="quantity" name="quantity" placeholder="1" min="1" max="100" value="1"/>
               </label><br />
-            <button class="add-to-cart">장바구니에 담기</button><br />
 
-            <span class="description"></span><br />
+              <span class="description"></span><br />
+              <button class="add-to-cart">Add to cart</button>
           </form>
-          <button class="back">다른 상품 보기</button>
+          <button type="button" class="back">다른 상품 보기</button>
         </div>
       </div>
     </template>
@@ -118,11 +119,11 @@
     <!-- 주문 내역 아이템 -->
     <template id="ordered-form-item">
       <li class="ordered-form-item">
-        주문번호 : <span class="order-id"></span><br />
-        주문시간 : <span class="order-time"></span><br/>
+        Order Id : <span class="order-id"></span><br />
+        Order Time : <span class="order-time"></span><br/>
         <ul class="ordered-form-item-ul"></ul>
 
-        <button class="delete">삭제</button>
+        <button class="delete">delete</button>
       </li>
     </template>
 
@@ -143,25 +144,29 @@
     <!-- 회원가입 -->
     <template id="user-register-form">
       <form class="user-register-form">
-        Name: <input type="text" name="newname" />
-        <button>아이디 중복 확인</button><br />
-        Password: <input type="text" name="newpassword" /><br />
+        Name <input type="text" name="newname" class="newname" required/><br>
+        <button type="button" class="check-id">아이디 중복 확인</button><br /><br>
+        Password <input type="password" name="newpassword" required/><br />
         <button class="register-submit-button">가입완료</button>
       </form>
     </template>
 
     <!-- 회원가입 성공 -->
     <template id="register-success-form">
-      <h1 class="welcome"></h1>
-      <button class="continue-button">쇼핑 계속 하기</button>
+      <div class="register-success-form">
+        Welcome!<br>
+        <span class="welcome"></span><br>
+        Thank you for joining us<br>
+      <button class="continue-button">쇼핑하러 가기</button>
+    </div>
     </template>
 
     <!-- 마이 페이지 폼 -->
     <template id="my-page-form">
       <div class="my-page-form">
-        <span class="hello"></span> <button class="logout">로그아웃</button>
-        <button class="go-to-cart">장바구니</button>
-        <button class="ordered-list">주문내역 보기</button>
+        Welcome back! <span class="hello"></span> <button class="logout">Logout</button>
+        <button class="go-to-cart">My Cart</button>
+        <button class="ordered-list">Order list</button>
       </div>
     </template>
 

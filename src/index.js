@@ -88,7 +88,7 @@ async function drawProductList(productData) {
   for (const product of productData) {
     const fragment = document.importNode(templates.productForm, true);
     const productForm = fragment.querySelector(".product-form");
-    const cover = fragment.querySelector('.cover');
+    const cover = fragment.querySelector(".cover");
     const imageEl = fragment.querySelector(".image");
     imageEl.src = product.mainImgUrl;
     cover.textContent = product.title;
@@ -100,25 +100,24 @@ async function drawProductList(productData) {
     });
     productForm.addEventListener("mouseover", e => {
       e.preventDefault();
-      cover.style.backgroundColor = 'rgba(245, 245, 245, 0.7)';
-      cover.style.color = 'rgba(6, 6, 6, 1.0)'
-      cover.setAttribute(content-data, 'test');
+      cover.style.backgroundColor = "rgba(245, 245, 245, 0.7)";
+      cover.style.color = "rgba(6, 6, 6, 1.0)";
     });
     productForm.addEventListener("mouseleave", e => {
       e.preventDefault();
-      cover.style.backgroundColor = 'rgba(245, 245, 245, 0)';
-      cover.style.color = 'rgba(6, 6, 6, 0)'
+      cover.style.backgroundColor = "rgba(245, 245, 245, 0)";
+      cover.style.color = "rgba(6, 6, 6, 0)";
     });
     productListEl.appendChild(fragment);
   }
   categoryLists.forEach(item => {
-    item.addEventListener('mouseover', e => {
+    item.addEventListener("mouseover", e => {
       item.style.borderBottom = "1px solid #000";
-    })
-    item.addEventListener('mouseleave', e => {
+    });
+    item.addEventListener("mouseleave", e => {
       item.style.borderBottom = "1px solid rgba(0, 0, 0, 0)";
-    })
-  })
+    });
+  });
 
   // 전체보기
   allEl.addEventListener("click", async e => {
@@ -232,9 +231,7 @@ async function drawProductDetail(postId) {
     if (!token) {
       alert("로그인 후 이용해주세요.");
     } else {
-
-
-    await getCartList();
+      await getCartList();
       if (cartLists) {
         isCartNotEmpty = true;
         for (const item of cartLists) {
@@ -408,6 +405,8 @@ async function drawOrderedForm() {
   params.append("_expand", "product");
   params.append("ordered", true);
   orderList.forEach(c => {
+
+
     for (const item of c.cartItems) {
       params.append("id", item.optionId);
       console.log(item.optionId);
@@ -446,7 +445,7 @@ async function drawOrderedForm() {
     orderTime.textContent = search.orderTime;
 
     deleteButton.addEventListener("click", async e => {
-      await api.delete("/orders/" + item.id);
+      await api.delete("/orders/" + search.id);
       drawOrderedForm();
     });
 
@@ -478,18 +477,42 @@ async function drawOrderedForm() {
 function drawRegisterForm() {
   const fragment = document.importNode(templates.registerForm, true);
   const registerForm = fragment.querySelector(".user-register-form");
+  const checkId = fragment.querySelector(".check-id");
+  const username = fragment.querySelector(".newname");
+  let validate = false;
+
+  checkId.addEventListener("click", async e => {
+    console.log(username.value);
+
+    const res = await api.get("/users", {
+      params : {
+      username : username.value
+      }
+    });
+    console.log(res.data);
+    if (res.data[0]) {
+      alert("이미 사용중인 아이디입니다.");
+      validate = false;
+    } else {
+      alert("사용 가능한 아이디입니다.")
+      validate = true;
+    }
+  });
   registerForm.addEventListener("submit", async e => {
     e.preventDefault();
-    const username = e.target.elements.newname.value;
-    const password = e.target.elements.newpassword.value;
-    await api.post("/users/register", {
-      username,
-      password
-    });
-    localStorage.setItem("loginUser", username);
-    drawRegisterSuccess(username);
+    if (validate) {
+      const username = e.target.elements.newname.value;
+      const password = e.target.elements.newpassword.value;
+      await api.post("/users/register", {
+        username,
+        password
+      });
+      localStorage.setItem("loginUser", username);
+      drawRegisterSuccess(username);
+    } else {
+      alert("아이디 중복 체크를 해주세요.");
+    }
   });
-
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
 }
@@ -498,7 +521,7 @@ function drawRegisterSuccess(username) {
   const fragment = document.importNode(templates.registerSuccessForm, true);
   const welcome = fragment.querySelector(".welcome");
   const continueButton = fragment.querySelector(".continue-button");
-  welcome.textContent = `반갑습니다 ${username}님!`;
+  welcome.textContent = `${username}`;
   continueButton.addEventListener("click", e => {
     e.preventDefault();
     drawScreen(null);
@@ -514,7 +537,7 @@ async function drawMyPageForm() {
   const goToCart = fragment.querySelector(".go-to-cart");
   const hello = fragment.querySelector(".hello");
   const orderedList = fragment.querySelector(".ordered-list");
-  hello.textContent = `안녕하세요. ${localStorage.getItem("loginUser")}님`;
+  hello.textContent = `${localStorage.getItem("loginUser")}`;
 
   goToCart.addEventListener("click", e => {
     e.preventDefault();
