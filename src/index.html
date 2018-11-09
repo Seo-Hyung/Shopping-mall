@@ -58,16 +58,8 @@
             ><br />
             <label>
               수량 선택 :
-              <input
-                type="number"
-                class="quantity"
-                name="quantity"
-                placeholder="1"
-                min="1"
-                max="100"
-                value="1"
-              /> </label
-            ><br />
+              <input type="number" class="quantity" name="quantity" placeholder="1" min="1" max="100" value="1"/>
+              </label><br />
             <button class="add-to-cart">장바구니에 담기</button><br />
 
             <span class="description"></span><br />
@@ -90,6 +82,7 @@
 
 
         </ul>
+        <button class="continue-shopping">쇼핑 계속하기</button>
         <button class="order-button">주문하기</button>
         <button class="delete">선택 삭제</button>
       </div>
@@ -101,7 +94,9 @@
         <input class="check-delete" type="checkbox" checked />
         <img class="image" src="#" alt="" /> <span class="title"></span>
         <span class="option"></span> <span class="price"></span>
-        <span class="quantity"></span>
+        <!-- <span class="quantity"></span> -->
+        <input type="number" class="quantity" min="1" max="100" value="1"/>
+
       </li>
     </template>
 

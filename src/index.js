@@ -17,6 +17,7 @@ api.interceptors.request.use(function(config) {
 
 const headerEl = document.querySelector(".header");
 const rootEl = document.querySelector(".root");
+let cartLists;
 const templates = {
   titleForm: document.querySelector("#title-form").content,
   loginForm: document.querySelector("#login-form").content,
@@ -134,7 +135,7 @@ async function drawProductList(productData) {
   // pants
   pantsEl.addEventListener("click", async e => {
     e.preventDefault();
-    pantsEl.classList.add('category-clicked');
+    pantsEl.classList.add("category-clicked");
     const res = await api.get("/products", {
       params: {
         category: "pants"
@@ -144,20 +145,19 @@ async function drawProductList(productData) {
 
     drawScreen(productData);
   });
-// knitwear
-knitwearEl.addEventListener("click", async e => {
-  e.preventDefault();
-  knitwearEl.classList.add('category-clicked');
-  const res = await api.get("/products", {
-    params: {
-      category: "knitwear"
-    }
+  // knitwear
+  knitwearEl.addEventListener("click", async e => {
+    e.preventDefault();
+    knitwearEl.classList.add("category-clicked");
+    const res = await api.get("/products", {
+      params: {
+        category: "knitwear"
+      }
+    });
+    const productData = res.data;
+
+    drawScreen(productData);
   });
-  const productData = res.data;
-
-  drawScreen(productData);
-});
-
 
   // 문서 삽입
   rootEl.textContent = "";
@@ -202,12 +202,46 @@ async function drawProductDetail(postId) {
   productOptionForm.addEventListener("submit", async e => {
     e.preventDefault();
     const optionId = e.target.elements.options.value;
-    const quantity = e.target.elements.quantity.value;
-    await api.post("/cartItems", {
-      ordered: false,
-      optionId,
-      quantity
-    });
+    let quantity = e.target.elements.quantity.value;
+    let isCartNotEmpty = false;
+    let overlapItem = null;
+    await getCartList();
+
+    if (cartLists) {
+      // 카드가 null 이 아니면
+      isCartNotEmpty = true;
+      for (const item of cartLists) {
+        isCartNotEmpty = true;
+        if (optionId === item.optionId) { //중복이면
+          overlapItem = item;
+        }
+      }
+    } else {
+      // 카드가 null 임
+      isCartNotEmpty = false;
+    }
+
+    if(isCartNotEmpty && overlapItem){ // 카드가 null이 아니면
+      console.log("중복상품 들어감")
+      console.log(optionId);
+      console.log(overlapItem.optionId);
+      quantity = Number.parseInt(quantity) + Number.parseInt(overlapItem.quantity);
+      await api.patch("/cartItems/" + overlapItem.id, {
+        ordered: false,
+        optionId,
+        quantity
+      });
+      console.log('<cartlist>')
+      console.log(cartLists)
+    } else {
+        console.log("새로운 상품 들감");
+        await api.post("/cartItems", {
+          ordered: false,
+          optionId,
+          quantity
+        });
+      }
+
     drawCartForm();
   });
 
@@ -215,13 +249,8 @@ async function drawProductDetail(postId) {
   rootEl.appendChild(fragment);
 }
 
-// 장바구니 그리기
-async function drawCartForm() {
-  const fragment = document.importNode(templates.cartForm, true);
-  const cartFormEl = fragment.querySelector(".cart-form-ul");
-  const orderButton = fragment.querySelector(".order-button");
-  const deleteButton = fragment.querySelector(".delete");
-
+// 장바구니 리스트 가져오기
+async function getCartList() {
   const username = localStorage.getItem("loginUser", username);
   const userRes = await api.get("/users", {
     params: {
@@ -236,21 +265,38 @@ async function drawCartForm() {
     }
   });
 
-  const cartListArr = [];
   // 으잉 이게 무슨 코드지
-  const cartLists = res.data;
+  cartLists = res.data;
+  console.log('getcartlist 함수 내')
+  console.log(cartLists)
+}
+
+// 장바구니 그리기
+async function drawCartForm() {
+  const fragment = document.importNode(templates.cartForm, true);
+  const cartFormEl = fragment.querySelector(".cart-form-ul");
+  const orderButton = fragment.querySelector(".order-button");
+  const deleteButton = fragment.querySelector(".delete");
+  const continueButton = fragment.querySelector(".continue-shopping");
+
+  await getCartList();
+
+  console.log("<cartLists>2");
+  console.log(cartLists);
   const params = new URLSearchParams();
   cartLists.forEach(c => {
     params.append("id", c.option.productId);
-    cartListArr.push(c.id);
+    console.log(c);
   });
-  // console.log(cartListArr)
 
   const res2 = await api.get("/products", {
     params
   });
   const idList = res2.data;
+  // 체크된 아이템을 확인하기 위한
   const cartItemArr = [];
+
+  // 장바구니 아이템 하나씩 추가
   for (const item of cartLists) {
     const fragment = document.importNode(templates.cartItem, true);
     const checkDelete = fragment.querySelector(".check-delete");
@@ -264,7 +310,7 @@ async function drawCartForm() {
     checkDelete.setAttribute("value", item.id);
     option.textContent = item.option.title;
     price.textContent = item.option.price;
-    quantity.textContent = item.quantity;
+    quantity.value = item.quantity;
     const id = idList.find(i => i.id === item.option.productId);
     title.textContent = id.title;
     image.src = id.mainImgUrl;
@@ -272,6 +318,10 @@ async function drawCartForm() {
     cartFormEl.appendChild(fragment);
   }
 
+  continueButton.addEventListener("click", e => {
+    e.preventDefault();
+    drawScreen();
+  });
   orderButton.addEventListener("click", async e => {
     e.preventDefault();
     const res = await api.post("/orders", {
@@ -282,7 +332,6 @@ async function drawCartForm() {
     console.log("orderId:" + orderId);
 
     // 실험 코드
-    console.log(cartItemArr);
     for (const item of cartItemArr) {
       if (item.firstElementChild.checked) {
         const patchId = item.firstElementChild.value;
@@ -296,13 +345,11 @@ async function drawCartForm() {
     }
     //
 
-
-
     drawOrderedForm();
   });
 
   deleteButton.addEventListener("click", async e => {
-    console.log(cartItemArr);
+    // console.log(cartItemArr);
     for (const item of cartItemArr) {
       if (item.firstElementChild.checked) {
         const deleteId = item.firstElementChild.value;
@@ -332,9 +379,9 @@ async function drawOrderedForm() {
     orderTime.textContent = item.orderTime;
 
     orderedForm.appendChild(fragment);
-  })
+  });
 
-  rootEl.textContent="";
+  rootEl.textContent = "";
   rootEl.append(fragment);
 }
 
@@ -384,6 +431,7 @@ async function drawMyPageForm() {
     e.preventDefault();
     drawCartForm();
   });
+  // 로그아웃
   logout.addEventListener("click", e => {
     localStorage.removeItem("token");
     localStorage.removeItem("loginUser");
@@ -392,7 +440,7 @@ async function drawMyPageForm() {
   orderedList.addEventListener("click", e => {
     e.preventDefault();
     drawOrderedForm();
-  })
+  });
   headerEl.appendChild(fragment);
 }
 
