@@ -211,38 +211,45 @@ async function drawProductDetail(postId) {
     let quantity = e.target.elements.quantity.value;
     let isCartNotEmpty = false;
     let overlapItem = null;
+
+    console.log('test')
+    const token = localStorage.getItem("token");
+    console.log(token)
+    if (!token) {
+      alert("로그인 후 이용해주세요.");
+    } else {
+
+
     await getCartList();
-
-    if (cartLists) {
-      // 카드가 null 이 아니면
-      isCartNotEmpty = true;
-      for (const item of cartLists) {
+      if (cartLists) {
         isCartNotEmpty = true;
-        if (optionId === item.optionId) {
-          //중복이면
-          overlapItem = item;
+        for (const item of cartLists) {
+          isCartNotEmpty = true;
+          if (optionId === item.optionId) {
+            overlapItem = item;
+          }
         }
+      } else {
+        isCartNotEmpty = false;
       }
-    } else {
-      // 카드가 null 임
-      isCartNotEmpty = false;
-    }
 
-    if (isCartNotEmpty && overlapItem) {
-      // 카드가 null이 아니면
-      quantity =
-        Number.parseInt(quantity) + Number.parseInt(overlapItem.quantity);
-      await api.patch("/cartItems/" + overlapItem.id, {
-        ordered: false,
-        optionId,
-        quantity
-      });
-    } else {
-      await api.post("/cartItems", {
-        ordered: false,
-        optionId,
-        quantity
-      });
+      // 같은 상품이 있으면
+      if (isCartNotEmpty && overlapItem) {
+        quantity =
+          Number.parseInt(quantity) + Number.parseInt(overlapItem.quantity);
+        await api.patch("/cartItems/" + overlapItem.id, {
+          ordered: false,
+          optionId,
+          quantity
+        });
+      } else {
+        // 새로운 상품이 들어오면
+        await api.post("/cartItems", {
+          ordered: false,
+          optionId,
+          quantity
+        });
+      }
     }
 
     drawCartForm();
@@ -389,7 +396,7 @@ async function drawOrderedForm() {
   orderList.forEach(c => {
     for (const item of c.cartItems) {
       params.append("id", item.optionId);
-      console.log(item.optionId)
+      console.log(item.optionId);
     }
   });
 
@@ -399,7 +406,6 @@ async function drawOrderedForm() {
 
   const optionsFind = res2.data;
 
-
   for (const search of orderList) {
     const fragment = document.importNode(templates.orderedFormItem, true);
     const orderedFormItem = fragment.querySelector(".ordered-form-item-ul");
@@ -408,9 +414,9 @@ async function drawOrderedForm() {
     const deleteButton = fragment.querySelector(".delete");
 
     let orderedList = [];
-    for(const o of optionsFind){
-      for(const i of search.cartItems){
-        if(i.optionId==o.id){
+    for (const o of optionsFind) {
+      for (const i of search.cartItems) {
+        if (i.optionId == o.id) {
           // quantity를 가져오기 위해 cartItems에 넣어줌.
           o.cartItems = i.quantity;
           orderedList.push(o);
@@ -430,8 +436,8 @@ async function drawOrderedForm() {
       drawOrderedForm();
     });
 
-    for(const item of orderedList) {
-      console.log(item)
+    for (const item of orderedList) {
+      console.log(item);
       const fragment = document.importNode(templates.orderedItemDetail, true);
       const title = fragment.querySelector(".title");
       const image = fragment.querySelector(".image");
