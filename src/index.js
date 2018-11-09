@@ -88,8 +88,10 @@ async function drawProductList(productData) {
   for (const product of productData) {
     const fragment = document.importNode(templates.productForm, true);
     const productForm = fragment.querySelector(".product-form");
+    const cover = fragment.querySelector('.cover');
     const imageEl = fragment.querySelector(".image");
     imageEl.src = product.mainImgUrl;
+    cover.textContent = product.title;
     let postId = product.id;
 
     productForm.addEventListener("click", e => {
@@ -98,11 +100,25 @@ async function drawProductList(productData) {
     });
     productForm.addEventListener("mouseover", e => {
       e.preventDefault();
-      // alert('test');
-      // productForm.pseudoStyle("after","content","content");
+      cover.style.backgroundColor = 'rgba(245, 245, 245, 0.7)';
+      cover.style.color = 'rgba(6, 6, 6, 1.0)'
+      cover.setAttribute(content-data, 'test');
+    });
+    productForm.addEventListener("mouseleave", e => {
+      e.preventDefault();
+      cover.style.backgroundColor = 'rgba(245, 245, 245, 0)';
+      cover.style.color = 'rgba(6, 6, 6, 0)'
     });
     productListEl.appendChild(fragment);
   }
+  categoryLists.forEach(item => {
+    item.addEventListener('mouseover', e => {
+      item.style.borderBottom = "1px solid #000";
+    })
+    item.addEventListener('mouseleave', e => {
+      item.style.borderBottom = "1px solid rgba(0, 0, 0, 0)";
+    })
+  })
 
   // 전체보기
   allEl.addEventListener("click", async e => {
@@ -212,9 +228,7 @@ async function drawProductDetail(postId) {
     let isCartNotEmpty = false;
     let overlapItem = null;
 
-    console.log('test')
     const token = localStorage.getItem("token");
-    console.log(token)
     if (!token) {
       alert("로그인 후 이용해주세요.");
     } else {
