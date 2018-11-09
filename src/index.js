@@ -32,7 +32,7 @@ const templates = {
   cartItem: document.querySelector("#cart-item").content,
   orderedForm: document.querySelector("#ordered-form").content,
   orderedFormItem: document.querySelector("#ordered-form-item").content,
-  orderedItemDetail: document.querySelector('#ordered-item-detail').content
+  orderedItemDetail: document.querySelector("#ordered-item-detail").content
 };
 
 function drawTitleForm() {
@@ -95,6 +95,11 @@ async function drawProductList(productData) {
     productForm.addEventListener("click", e => {
       e.preventDefault();
       drawProductDetail(postId);
+    });
+    productForm.addEventListener("mouseover", e => {
+      e.preventDefault();
+      // alert('test');
+      // productForm.pseudoStyle("after","content","content");
     });
     productListEl.appendChild(fragment);
   }
@@ -213,7 +218,8 @@ async function drawProductDetail(postId) {
       isCartNotEmpty = true;
       for (const item of cartLists) {
         isCartNotEmpty = true;
-        if (optionId === item.optionId) { //중복이면
+        if (optionId === item.optionId) {
+          //중복이면
           overlapItem = item;
         }
       }
@@ -222,20 +228,22 @@ async function drawProductDetail(postId) {
       isCartNotEmpty = false;
     }
 
-    if(isCartNotEmpty && overlapItem){ // 카드가 null이 아니면
-      quantity = Number.parseInt(quantity) + Number.parseInt(overlapItem.quantity);
+    if (isCartNotEmpty && overlapItem) {
+      // 카드가 null이 아니면
+      quantity =
+        Number.parseInt(quantity) + Number.parseInt(overlapItem.quantity);
       await api.patch("/cartItems/" + overlapItem.id, {
         ordered: false,
         optionId,
         quantity
       });
     } else {
-        await api.post("/cartItems", {
-          ordered: false,
-          optionId,
-          quantity
-        });
-      }
+      await api.post("/cartItems", {
+        ordered: false,
+        optionId,
+        quantity
+      });
+    }
 
     drawCartForm();
   });
@@ -243,7 +251,6 @@ async function drawProductDetail(postId) {
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
 }
-
 
 // 장바구니 리스트 가져오기
 async function getCartList() {
@@ -272,7 +279,7 @@ async function drawCartForm() {
   const orderButton = fragment.querySelector(".order-button");
   const deleteButton = fragment.querySelector(".delete");
   const continueButton = fragment.querySelector(".continue-shopping");
-  const totalPrice = fragment.querySelector('.total-price');
+  const totalPrice = fragment.querySelector(".total-price");
 
   await getCartList();
 
@@ -312,16 +319,13 @@ async function drawCartForm() {
 
   // 최종 가격 그리기
   let totalP = 0;
-  for(const item of cartLists){
-    totalP = totalP + (item.quantity*item.option.price);
+  for (const item of cartLists) {
+    totalP = totalP + item.quantity * item.option.price;
   }
   totalPrice.textContent = "Total Price : " + totalP;
 
-
   // 장바구니에서 수량 변경 시
-  cartFormEl.addEventListener("change", e => {
-
-  });
+  cartFormEl.addEventListener("change", e => {});
   continueButton.addEventListener("click", e => {
     e.preventDefault();
     drawScreen();
@@ -370,70 +374,85 @@ async function drawOrderedForm() {
   const fragment = document.importNode(templates.orderedForm, true);
   const orderedForm = fragment.querySelector(".ordered-form-ul");
 
-  const res = await api.get("/orders");
-  const orderedList = res.data;
+  const res = await api.get("/orders", {
+    params: {
+      _embed: "cartItems",
+      ordered: true
+    }
+  });
+  const orderList = res.data;
 
-  for(const item of orderedList){
+  const params = new URLSearchParams();
+  params.append("_embed", "cartItems");
+  params.append("_expand", "product");
+  params.append("ordered", true);
+  orderList.forEach(c => {
+    for (const item of c.cartItems) {
+      params.append("id", item.optionId);
+      console.log(item.optionId)
+    }
+  });
+
+  const res2 = await api.get("/options", {
+    params
+  });
+
+  const optionsFind = res2.data;
+
+
+  for (const search of orderList) {
     const fragment = document.importNode(templates.orderedFormItem, true);
-    const orderedFormItem = fragment.querySelector('.ordered-form-item-ul');
+    const orderedFormItem = fragment.querySelector(".ordered-form-item-ul");
     const orderId = fragment.querySelector(".order-id");
     const orderTime = fragment.querySelector(".order-time");
     const deleteButton = fragment.querySelector(".delete");
-    orderId.textContent = item.id;
-    orderTime.textContent = item.orderTime;
 
-    deleteButton.addEventListener("click", async e => {
-      await api.delete('/orders/' + item.id);
-      drawOrderedForm();
-    })
-
-    const username = localStorage.getItem("loginUser", username);
-    const userRes = await api.get("/users", {
-      params: {
-        username
-      }
-    });
-    const res = await api.get("/cartItems", {
-      params: {
-        ordered: true,
-        userId: userRes.data[0].id,
-        _expand: "option"
-      }
-    });
-    const detailData = res.data;
-
-    const temp = detailData.filter(i => i.orderId === item.id);
-    for(const i of temp){
-      const fragment = document.importNode(templates.orderedItemDetail, true);
-      const title = fragment.querySelector('.title');
-      const image = fragment.querySelector('.image');
-      const price = fragment.querySelector('.price');
-      const quantity = fragment.querySelector('.quantity');
-      const optionEl = fragment.querySelector('.option');
-      optionEl.textContent = i.option.title;
-      quantity.textContent = i.quantity;
-      price.textContent = i.option.price;
-
-      const id = i.option.productId;
-      const tempres = await api.get('/products', {
-        params : {
-          id
+    let orderedList = [];
+    for(const o of optionsFind){
+      for(const i of search.cartItems){
+        if(i.optionId==o.id){
+          // quantity를 가져오기 위해 cartItems에 넣어줌.
+          o.cartItems = i.quantity;
+          orderedList.push(o);
         }
-      })
-      const tempData = tempres.data[0]
-      title.textContent = tempData.title;
-      image.src = tempData.mainImgUrl;
-      orderedFormItem.appendChild(fragment);
+      }
+      // filter는 왜 안될까
+      // orderedList = search.cartItems.filter(
+      //   item => item.optionId == o.id
+      // )
     }
 
+    orderId.textContent = search.id;
+    orderTime.textContent = search.orderTime;
+
+    deleteButton.addEventListener("click", async e => {
+      await api.delete("/orders/" + item.id);
+      drawOrderedForm();
+    });
+
+    for(const item of orderedList) {
+      console.log(item)
+      const fragment = document.importNode(templates.orderedItemDetail, true);
+      const title = fragment.querySelector(".title");
+      const image = fragment.querySelector(".image");
+      const price = fragment.querySelector(".price");
+      const quantity = fragment.querySelector(".quantity");
+      const optionEl = fragment.querySelector(".option");
+
+      optionEl.textContent = item.title;
+      quantity.textContent = item.cartItems;
+      price.textContent = item.price;
+
+      title.textContent = item.product.title;
+      image.src = item.product.mainImgUrl;
+      orderedFormItem.appendChild(fragment);
+    }
     orderedForm.appendChild(fragment);
   }
-
 
   rootEl.textContent = "";
   rootEl.append(fragment);
 }
-
 
 // 회원가입 폼 그리기
 function drawRegisterForm() {
