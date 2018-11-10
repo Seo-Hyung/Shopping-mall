@@ -19,7 +19,7 @@ const headerEl = document.querySelector(".header");
 const rootEl = document.querySelector(".root");
 let cartLists; //장바구니 리스트 변수
 // 체크된 아이템을 확인하기 위한
-let cartItemChecked=[];
+let cartItemChecked = [];
 
 const templates = {
   titleForm: document.querySelector("#title-form").content,
@@ -181,7 +181,8 @@ async function drawProductDetail(postId) {
       alert("로그인 후 이용해주세요.");
     } else {
       await getCartList();
-      if (cartLists) { // 장바구니에 상품이 있으면 중복 상품인지 체크
+      if (cartLists) {
+        // 장바구니에 상품이 있으면 중복 상품인지 체크
         isCartNotEmpty = true;
         for (const item of cartLists) {
           isCartNotEmpty = true;
@@ -259,7 +260,6 @@ async function drawCartForm() {
   });
   const idList = res2.data;
 
-
   // 장바구니 아이템 하나씩 추가
   for (const item of cartLists) {
     const fragment = document.importNode(templates.cartItem, true);
@@ -280,31 +280,31 @@ async function drawCartForm() {
     image.src = id.mainImgUrl;
 
     // 체크 그리기
-    if(cartItemChecked.includes(item.id)){
-      checkBox.setAttribute('checked', '');
+    if (cartItemChecked.includes(item.id)) {
+      checkBox.setAttribute("checked", "");
     }
 
     // 장바구니 체크박스 핸들
-    checkBox.addEventListener('input', e => {
+    checkBox.addEventListener("input", e => {
       e.preventDefault();
-      console.log(e.target)
-      if(e.target.checked){
+      console.log(e.target);
+      if (e.target.checked) {
         const temp = cartItemChecked.every(item => item !== e.target.value);
-        if(temp){
+        if (temp) {
           cartItemChecked.push(Number.parseInt(e.target.value));
         }
       } // 체크 풀면
-      else{
+      else {
         cartItemChecked = cartItemChecked.filter(i => i != e.target.value);
-        for(let i=0; i<cartItemChecked; i++){
-          if(cartItemChecked[i] === e.target.value){
+        for (let i = 0; i < cartItemChecked; i++) {
+          if (cartItemChecked[i] === e.target.value) {
             cartItemChecked = cartItemChecked.splice(i, 1);
           }
         }
       }
 
       drawCartForm();
-    })
+    });
     // 수량 변경 시
     quantity.addEventListener("change", async e => {
       e.preventDefault();
@@ -336,7 +336,7 @@ async function drawCartForm() {
     e.preventDefault();
 
     if (!cartItemChecked[0]) {
-      alert("상품을 골라주세요.");
+      alert("주문할 상품이 없습니다.");
     } else {
       const res = await api.post("/orders", {
         orderTime: Date.now() // 현재 시각을 나타내는 정수
@@ -346,24 +346,27 @@ async function drawCartForm() {
 
       // cartItemChecked 에 있는거 모두 주문 후 리스트에서는 제거
       for (const item of cartItemChecked) {
-          await api.patch("/cartItems/" + item, {
-            ordered: true,
-            orderId
-          });
-          cartItemChecked = cartItemChecked.splice(item, 1);
-        }
+        await api.patch("/cartItems/" + item, {
+          ordered: true,
+          orderId
+        });
+        cartItemChecked = cartItemChecked.splice(item, 1);
       }
-
       drawOrderedForm();
-    });
+    }
+  });
 
+  // 장바구니에서 선택 삭제
   deleteButton.addEventListener("click", async e => {
-    for (const item of cartItemChecked) {
+    if (!cartItemChecked[0]) {
+      alert("삭제할 항목이 없습니다.");
+    } else {
+      for (const item of cartItemChecked) {
         await api.delete("/cartItems/" + item);
         cartItemChecked = cartItemChecked.splice(item, 1);
-
+      }
+      drawCartForm();
     }
-    drawCartForm();
   });
 
   rootEl.textContent = "";
@@ -462,7 +465,6 @@ function drawRegisterForm() {
   let validate = false;
 
   checkId.addEventListener("click", async e => {
-
     const res = await api.get("/users", {
       params: {
         username: username.value
