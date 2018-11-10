@@ -18,6 +18,8 @@ api.interceptors.request.use(function(config) {
 const headerEl = document.querySelector(".header");
 const rootEl = document.querySelector(".root");
 let cartLists; //장바구니 리스트 변수
+// 체크된 아이템을 확인하기 위한
+let cartItemChecked=[];
 
 const templates = {
   titleForm: document.querySelector("#title-form").content,
@@ -156,7 +158,7 @@ async function drawProductDetail(postId) {
   optionsEl.forEach(item => {
     const fragment = document.importNode(templates.productOptionForm, true);
     const optionEl = fragment.querySelector(".option");
-    optionEl.textContent = `${item.title} - ${item.price}원`;
+    optionEl.textContent = `${item.title} - ${item.price}₩`;
     optionEl.setAttribute("value", item.id);
     optionList.appendChild(fragment);
   });
@@ -171,15 +173,15 @@ async function drawProductDetail(postId) {
     e.preventDefault();
     const optionId = e.target.elements.options.value;
     let quantity = e.target.elements.quantity.value;
-    let isCartNotEmpty = false;
-    let overlapItem = null;
+    let isCartNotEmpty = false; // 장바구니에 상품이 있으면 중복 상품 체크
+    let overlapItem = null; // 중복 상품이면 수량만 변경해주기 위해
 
     const token = localStorage.getItem("token");
     if (!token) {
       alert("로그인 후 이용해주세요.");
     } else {
       await getCartList();
-      if (cartLists) {
+      if (cartLists) { // 장바구니에 상품이 있으면 중복 상품인지 체크
         isCartNotEmpty = true;
         for (const item of cartLists) {
           isCartNotEmpty = true;
@@ -257,13 +259,11 @@ async function drawCartForm() {
   });
   const idList = res2.data;
 
-  // 체크된 아이템을 확인하기 위한
-  const cartItemArr = [];
 
   // 장바구니 아이템 하나씩 추가
   for (const item of cartLists) {
     const fragment = document.importNode(templates.cartItem, true);
-    const checkDelete = fragment.querySelector(".check-delete");
+    const checkBox = fragment.querySelector(".check-box");
     const cartItem = fragment.querySelector(".cart-item");
     const title = fragment.querySelector(".title");
     const option = fragment.querySelector(".option");
@@ -271,7 +271,7 @@ async function drawCartForm() {
     const price = fragment.querySelector(".price");
     const quantity = fragment.querySelector(".quantity");
 
-    checkDelete.setAttribute("value", item.id);
+    checkBox.setAttribute("value", item.id);
     option.textContent = item.option.title;
     price.textContent = item.option.price;
     quantity.value = item.quantity;
@@ -279,6 +279,32 @@ async function drawCartForm() {
     title.textContent = id.title;
     image.src = id.mainImgUrl;
 
+    // 체크 그리기
+    if(cartItemChecked.includes(item.id)){
+      checkBox.setAttribute('checked', '');
+    }
+
+    // 장바구니 체크박스 핸들
+    checkBox.addEventListener('input', e => {
+      e.preventDefault();
+      console.log(e.target)
+      if(e.target.checked){
+        const temp = cartItemChecked.every(item => item !== e.target.value);
+        if(temp){
+          cartItemChecked.push(Number.parseInt(e.target.value));
+        }
+      } // 체크 풀면
+      else{
+        cartItemChecked = cartItemChecked.filter(i => i != e.target.value);
+        for(let i=0; i<cartItemChecked; i++){
+          if(cartItemChecked[i] === e.target.value){
+            cartItemChecked = cartItemChecked.splice(i, 1);
+          }
+        }
+      }
+
+      drawCartForm();
+    })
     // 수량 변경 시
     quantity.addEventListener("change", async e => {
       e.preventDefault();
@@ -289,14 +315,14 @@ async function drawCartForm() {
       drawCartForm();
     });
 
-    cartItemArr.push(cartItem);
     cartFormEl.appendChild(fragment);
   }
 
-  // 최종 가격 그리기
+  // // 최종 가격 그리기
   let totalP = 0;
-  for (const item of cartLists) {
-    totalP = totalP + item.quantity * item.option.price;
+  for (const item of cartItemChecked) {
+    const temp = cartLists.find(i => i.id === item);
+    totalP = totalP + temp.quantity * temp.option.price;
   }
   totalPrice.textContent = "Total Price : " + totalP;
 
@@ -309,8 +335,8 @@ async function drawCartForm() {
   orderButton.addEventListener("click", async e => {
     e.preventDefault();
 
-    if (!cartItemArr[0]) {
-      alert("장바구니가 비어있습니다.");
+    if (!cartItemChecked[0]) {
+      alert("상품을 골라주세요.");
     } else {
       const res = await api.post("/orders", {
         orderTime: Date.now() // 현재 시각을 나타내는 정수
@@ -318,30 +344,24 @@ async function drawCartForm() {
 
       const orderId = res.data.id;
 
-      // 실험 코드
-      for (const item of cartItemArr) {
-        if (item.firstElementChild.checked) {
-          const patchId = item.firstElementChild.value;
-
-          // 위에서 만든 주문 객체의 id를 장바구니 항목의 orderId에 넣어줍니다.
-          await api.patch("/cartItems/" + patchId, {
+      // cartItemChecked 에 있는거 모두 주문 후 리스트에서는 제거
+      for (const item of cartItemChecked) {
+          await api.patch("/cartItems/" + item, {
             ordered: true,
             orderId
           });
+          cartItemChecked = cartItemChecked.splice(item, 1);
         }
       }
-      //
 
       drawOrderedForm();
-    }
-  });
+    });
 
   deleteButton.addEventListener("click", async e => {
-    for (const item of cartItemArr) {
-      if (item.firstElementChild.checked) {
-        const deleteId = item.firstElementChild.value;
-        await api.delete("/cartItems/" + deleteId);
-      }
+    for (const item of cartItemChecked) {
+        await api.delete("/cartItems/" + item);
+        cartItemChecked = cartItemChecked.splice(item, 1);
+
     }
     drawCartForm();
   });
@@ -349,7 +369,6 @@ async function drawCartForm() {
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
 }
-
 // 주문내역 그리기
 async function drawOrderedForm() {
   const fragment = document.importNode(templates.orderedForm, true);
@@ -443,14 +462,12 @@ function drawRegisterForm() {
   let validate = false;
 
   checkId.addEventListener("click", async e => {
-    console.log(username.value);
 
     const res = await api.get("/users", {
       params: {
         username: username.value
       }
     });
-    console.log(res.data);
     if (res.data[0]) {
       alert("이미 사용중인 아이디입니다.");
       validate = false;
@@ -509,6 +526,7 @@ async function drawMyPageForm() {
     localStorage.removeItem("token");
     localStorage.removeItem("loginUser");
     cartLists = [];
+    cartItemChecked = [];
     drawScreen(null);
   });
   orderedList.addEventListener("click", e => {
