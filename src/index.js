@@ -286,7 +286,6 @@ async function getCartList() {
     }
   });
 
-  // 으잉 이게 무슨 코드지
   cartLists = res.data;
 }
 
@@ -310,6 +309,7 @@ async function drawCartForm() {
     params
   });
   const idList = res2.data;
+
   // 체크된 아이템을 확인하기 위한
   const cartItemArr = [];
 
@@ -334,12 +334,12 @@ async function drawCartForm() {
 
     // 수량 변경 시
     quantity.addEventListener("change", async e=>{
-      e.preventDefault;
-      api.patch('/cartItems/' + item.id, {
+      e.preventDefault();
+      await api.patch('/cartItems/' + item.id, {
         quantity : quantity.value
       })
-      drawCartForm();
 
+      drawCartForm();
     })
 
     cartItemArr.push(cartItem);
@@ -353,14 +353,19 @@ async function drawCartForm() {
   }
   totalPrice.textContent = "Total Price : " + totalP;
 
-  // 장바구니에서 수량 변경 시
-  cartFormEl.addEventListener("change", e => {});
   continueButton.addEventListener("click", e => {
     e.preventDefault();
     drawScreen();
   });
+
+  // 주문하기
   orderButton.addEventListener("click", async e => {
     e.preventDefault();
+
+    if(!cartItemArr[0]){
+      alert('장바구니가 비어있습니다.')
+    } else{
+
     const res = await api.post("/orders", {
       orderTime: Date.now() // 현재 시각을 나타내는 정수
     });
@@ -382,6 +387,8 @@ async function drawCartForm() {
     //
 
     drawOrderedForm();
+
+  }
   });
 
   deleteButton.addEventListener("click", async e => {
