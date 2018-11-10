@@ -15,6 +15,7 @@ api.interceptors.request.use(function(config) {
 	return config;
 });
 
+const loadingScreen = document.querySelector('.loading-screen');
 const headerEl = document.querySelector(".header");
 const rootEl = document.querySelector(".root");
 let cartLists; //장바구니 리스트 변수
@@ -68,7 +69,8 @@ async function drawLoginForm() {
 	});
 	// 로그인 버튼
 	loginFormEl.addEventListener("submit", async e => {
-		e.preventDefault();
+    e.preventDefault();
+
 		const username = e.target.elements.username.value;
 		const password = e.target.elements.password.value;
 		const res = await api.post("/users/login", {
@@ -80,11 +82,12 @@ async function drawLoginForm() {
 		drawScreen(null);
 	});
 
-	headerEl.appendChild(fragment);
+  headerEl.appendChild(fragment);
 }
 
 // 로그인 시 상단 마이페이지 그리기
 async function drawMyPageForm() {
+
 	const fragment = document.importNode(templates.myPageForm, true);
 	const logout = fragment.querySelector(".logout");
 	const goToCart = fragment.querySelector(".go-to-cart");
@@ -93,9 +96,11 @@ async function drawMyPageForm() {
 	hello.textContent = `${localStorage.getItem("loginUser")}`;
 
 	// 장바구니 가기 버튼
-	goToCart.addEventListener("click", e => {
+	goToCart.addEventListener("click", async e => {
+    loadingScreen.style.display = "flex";
 		e.preventDefault();
-		drawCartForm();
+		await drawCartForm();
+    loadingScreen.style.display = "none";
 	});
 	// 로그아웃
 	logout.addEventListener("click", e => {
@@ -107,15 +112,18 @@ async function drawMyPageForm() {
 	});
 	// 주문내역 보기 버튼
 	orderedList.addEventListener("click", e => {
+    loadingScreen.style.display = "flex";
 		e.preventDefault();
 		drawOrderedForm();
+    loadingScreen.style.display = "none";
 	});
 
-	headerEl.appendChild(fragment);
+  headerEl.appendChild(fragment);
 }
 
 // 메인 화면에 카테고리 및 상품 리스트 그리기
 async function drawProductList(productData) {
+  loadingScreen.style.display = "flex";
 	const fragment = document.importNode(templates.productListForm, true);
 	const productListEl = fragment.querySelector(".product-list");
 	const categoryLists = fragment.querySelectorAll("li");
@@ -171,10 +179,12 @@ async function drawProductList(productData) {
 
 	rootEl.textContent = "";
 	rootEl.appendChild(fragment);
+  loadingScreen.style.display = "none";
 }
 
 // 상품 상세 페이지 그리기
 async function drawProductDetail(postId) {
+  loadingScreen.style.display = "flex";
 	const fragment = document.importNode(templates.productDetail, true);
 	const title = fragment.querySelector(".title");
 	const description = fragment.querySelector(".description");
@@ -213,6 +223,7 @@ async function drawProductDetail(postId) {
 
 	// 장바구니에 담기 버튼
 	productOptionForm.addEventListener("submit", async e => {
+    loadingScreen.style.display = "flex";
 		e.preventDefault();
 		const optionId = e.target.elements.options.value;
 		let quantity = e.target.elements.quantity.value;
@@ -252,10 +263,12 @@ async function drawProductDetail(postId) {
 		}
 
 		drawCartForm();
+    loadingScreen.style.display = "none";
 	});
 
 	rootEl.textContent = "";
 	rootEl.appendChild(fragment);
+  loadingScreen.style.display = "none";
 }
 
 // 장바구니 리스트 가져오기
@@ -274,7 +287,8 @@ async function getCartList() {
 		}
 	});
 
-	cartLists = res.data;
+  cartLists = res.data;
+
 }
 
 // 장바구니 그리기
@@ -322,6 +336,8 @@ async function drawCartForm() {
 
 		// 장바구니 체크박스 핸들
 		checkBox.addEventListener("input", e => {
+      loadingScreen.style.display = "flex";
+      console.log('췍췍')
 			e.preventDefault();
 			if (e.target.checked) {
 				const temp = cartItemChecked.every(item => item !== e.target.value);
@@ -339,16 +355,19 @@ async function drawCartForm() {
 			}
 
 			drawCartForm();
+      loadingScreen.style.display = "none";
 		});
 
 		// 수량 변경 시
 		quantity.addEventListener("change", async e => {
+      loadingScreen.style.display = "flex";
 			e.preventDefault();
 			await api.patch("/cartItems/" + item.id, {
 				quantity: quantity.value
 			});
 
 			drawCartForm();
+      loadingScreen.style.display = "none";
 		});
 
 		cartFormEl.appendChild(fragment);
@@ -375,6 +394,7 @@ async function drawCartForm() {
 		if (!cartItemChecked[0]) {
 			alert("주문할 상품이 없습니다.\n상품을 선택해주세요.");
 		} else {
+      loadingScreen.style.display = "flex";
 			const res = await api.post("/orders", {
 				orderTime: Date.now() // 현재 시각을 나타내는 정수
 			});
@@ -390,6 +410,7 @@ async function drawCartForm() {
 				cartItemChecked = cartItemChecked.splice(item, 1);
 			}
 			drawOrderedForm();
+      loadingScreen.style.display = "none";
 		}
 	});
 
@@ -398,11 +419,13 @@ async function drawCartForm() {
 		if (!cartItemChecked[0]) {
 			alert("삭제할 항목이 없습니다.\n상품을 선택해주세요.");
 		} else {
+      loadingScreen.style.display = "flex";
 			for (const item of cartItemChecked) {
 				await api.delete("/cartItems/" + item);
 				cartItemChecked = cartItemChecked.splice(item, 1);
 			}
 			drawCartForm();
+      loadingScreen.style.display = "none";
 		}
 	});
 
@@ -462,8 +485,10 @@ async function drawOrderedForm() {
 
 		// 주문 내역 항목 삭제 버튼
 		deleteButton.addEventListener("click", async e => {
+      loadingScreen.style.display = "flex";
 			await api.delete("/orders/" + search.id);
 			drawOrderedForm();
+      loadingScreen.style.display = "none";
 		});
 
 		for (const item of orderedList) {
@@ -491,6 +516,7 @@ async function drawOrderedForm() {
 
 // 회원가입 폼 그리기
 function drawRegisterForm() {
+  loadingScreen.style.display = "flex";
 	const fragment = document.importNode(templates.registerForm, true);
 	const registerForm = fragment.querySelector(".user-register-form");
 	const checkId = fragment.querySelector(".check-id");
@@ -517,6 +543,7 @@ function drawRegisterForm() {
 	registerForm.addEventListener("submit", async e => {
 		e.preventDefault();
 		if (validate) {
+      loadingScreen.style.display = "flex";
 			const username = e.target.elements.newname.value;
 			const password = e.target.elements.newpassword.value;
 			await api.post("/users/register", {
@@ -525,6 +552,7 @@ function drawRegisterForm() {
 			});
 			localStorage.setItem("loginUser", username);
 			drawRegisterSuccess(username);
+      loadingScreen.style.display = "none";
 		} else {
 			alert("아이디 중복 체크를 해주세요.");
 		}
@@ -532,6 +560,7 @@ function drawRegisterForm() {
 
 	rootEl.textContent = "";
 	rootEl.appendChild(fragment);
+  loadingScreen.style.display = "none";
 }
 
 // 회원가입 성공 화면 그리기
@@ -572,7 +601,7 @@ async function drawScreen(productData) {
 		const res = await api.get("/products");
 		const productData = res.data;
 		drawProductList(productData);
-	}
+  }
 }
 
 drawScreen(null);
