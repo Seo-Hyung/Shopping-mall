@@ -9,19 +9,18 @@
   </head>
 
   <body>
+    <!-- 로딩 폼 -->
+    <div class="loading-screen">
+      <div class="loading__element zz1">L</div>
+      <div class="loading__element zz2">O</div>
+      <div class="loading__element zz3">A</div>
+      <div class="loading__element zz4">D</div>
+      <div class="loading__element zz5">I</div>
+      <div class="loading__element zz6">N</div>
+      <div class="loading__element zz7">G</div>
+    </div>
 
-      <!-- 로딩 폼 -->
-      <div class="loading-screen">
-          <div class="loading__element zz1">L</div>
-          <div class="loading__element zz2">O</div>
-          <div class="loading__element zz3">A</div>
-          <div class="loading__element zz4">D</div>
-          <div class="loading__element zz5">I</div>
-          <div class="loading__element zz6">N</div>
-          <div class="loading__element zz7">G</div>
-      </div>
-
-
+    <!-- 타이틀 폼 -->
     <template id="title-form">
       <div class="title-form">
         <h1 class="shopping-mall-title">anglo-italian</h1>
@@ -31,11 +30,47 @@
     <!-- 로그인 폼 -->
     <template id="login-form">
       <form class="login-form">
-        <input type="text" name="username" placeholder="ID" required/>
-        <input type="password" name="password" placeholder="PASSWORD" required/>
+        <input type="text" name="username" placeholder="ID" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="PASSWORD"
+          required
+        />
         <button class="login-button">Sign in</button>
         <button type="button" class="register-button">Sign up</button>
       </form>
+    </template>
+
+    <!-- 회원가입 -->
+    <template id="user-register-form">
+      <form class="user-register-form">
+        Name <input type="text" name="newname" class="newname" required /><br />
+        <button type="button" class="check-id">아이디 중복 확인</button
+        ><br /><br />
+        Password <input type="password" name="newpassword" required /><br />
+        <button class="register-submit-button">가입완료</button>
+      </form>
+    </template>
+
+    <!-- 회원가입 성공 -->
+    <template id="register-success-form">
+      <div class="register-success-form">
+        Welcome!<br />
+        <span class="welcome"></span><br />
+        Thank you for joining us<br />
+        <button class="continue-button">쇼핑하러 가기</button>
+      </div>
+    </template>
+
+    <!-- 마이 페이지 폼 -->
+    <template id="my-page-form">
+      <div class="my-page-form">
+        Welcome back! <span class="hello"></span>
+        <button class="logout">Logout</button>
+        <button class="go-to-cart">My Cart</button>
+        <button class="ordered-list">Order list</button>
+      </div>
     </template>
 
     <!-- 상품 리스트 -->
@@ -48,21 +83,18 @@
         <li class="knitwear">knitwear</li>
         <li class="outerwear">outerwear</li>
       </ul>
-      <div class="product-list-form">
-        <div class="product-list">
-
-        </div>
-      </div>
+      <div class="product-list-form"><div class="product-list"></div></div>
     </template>
 
     <!-- 상품 하나 -->
     <template id="product-form">
-      <div class="product-form"><img class="image" src="#" alt="" />
-      <div class="cover">
-
-      </div></div>
+      <div class="product-form">
+        <img class="image" src="#" alt="" />
+        <div class="cover"></div>
+      </div>
     </template>
 
+    <!-- 상품 상세 -->
     <template id="product-detail">
       <div class="product-detail">
         <img class="detail-image" src="#" alt="" /><br />
@@ -79,11 +111,19 @@
             ><br />
             <label>
               quantity :
-              <input type="number" class="quantity" name="quantity" placeholder="1" min="1" max="100" value="1"/>
-              </label><br />
+              <input
+                type="number"
+                class="quantity"
+                name="quantity"
+                placeholder="1"
+                min="1"
+                max="100"
+                value="1"
+              /> </label
+            ><br />
 
-              <span class="description"></span><br />
-              <button class="add-to-cart">Add to cart</button>
+            <span class="description"></span><br />
+            <button class="add-to-cart">Add to cart</button>
           </form>
           <button type="button" class="back">다른 상품 보기</button>
         </div>
@@ -99,10 +139,9 @@
     <template id="cart-form">
       <div class="cart-form">
         <h1 class="cart-form-title">your bag</h1>
-        <ul class="cart-form-ul">
-
-        </ul>
-        <h2 class="total-price"></h2><br>
+        <ul class="cart-form-ul"></ul>
+        <h2 class="total-price"></h2>
+        <br />
         <button class="continue-shopping">쇼핑 계속하기</button>
         <button class="order-button">주문하기</button>
         <button class="delete">선택 삭제</button>
@@ -112,11 +151,10 @@
     <!-- 장바구니 아이템 -->
     <template id="cart-item">
       <li class="cart-item">
-        <input class="check-box" type="checkbox"/>
+        <input class="check-box" type="checkbox" />
         <img class="image" src="#" alt="" /> <span class="title"></span>
         <span class="option"></span> <span class="price"></span>
-        <input type="number" class="quantity" min="1" max="100" value="1"/>
-
+        <input type="number" class="quantity" min="1" max="100" value="1" />
       </li>
     </template>
 
@@ -132,7 +170,7 @@
     <template id="ordered-form-item">
       <li class="ordered-form-item">
         Order Id : <span class="order-id"></span><br />
-        Order Time : <span class="order-time"></span><br/>
+        Order Time : <span class="order-time"></span><br />
         <ul class="ordered-form-item-ul"></ul>
 
         <button class="delete">delete</button>
@@ -142,44 +180,13 @@
     <!-- 주문 내역 아이템 상세 -->
     <template id="ordered-item-detail">
       <li class="ordered-item-detail">
-      <br>
-      <span class="title"></span><br>
-      <div class="detail">
-      <img class="image" src="#" alt="">
-      <span class="option"></span>
-      <span class="quantity"></span>
-      <span class="price"></span>
-    </div>
-    </li>
-    </template>
-
-    <!-- 회원가입 -->
-    <template id="user-register-form">
-      <form class="user-register-form">
-        Name <input type="text" name="newname" class="newname" required/><br>
-        <button type="button" class="check-id">아이디 중복 확인</button><br /><br>
-        Password <input type="password" name="newpassword" required/><br />
-        <button class="register-submit-button">가입완료</button>
-      </form>
-    </template>
-
-    <!-- 회원가입 성공 -->
-    <template id="register-success-form">
-      <div class="register-success-form">
-        Welcome!<br>
-        <span class="welcome"></span><br>
-        Thank you for joining us<br>
-      <button class="continue-button">쇼핑하러 가기</button>
-    </div>
-    </template>
-
-    <!-- 마이 페이지 폼 -->
-    <template id="my-page-form">
-      <div class="my-page-form">
-        Welcome back! <span class="hello"></span> <button class="logout">Logout</button>
-        <button class="go-to-cart">My Cart</button>
-        <button class="ordered-list">Order list</button>
-      </div>
+        <br />
+        <span class="title"></span><br />
+        <div class="detail">
+          <img class="image" src="#" alt="" /> <span class="option"></span>
+          <span class="quantity"></span> <span class="price"></span>
+        </div>
+      </li>
     </template>
 
     <!-- 본문 -->
@@ -188,12 +195,12 @@
       <div class="root"><!-- 나머지 --></div>
       <div class="footer">
         <span class="info">
-          Ths is westbro's shopping mall practice website.<br>
-          Clone design from <a href="https://angloitalian.com/">here.</a><br>
+          Ths is westbro's shopping mall practice website.<br />
+          Clone design from <a href="https://angloitalian.com/">here.</a><br />
         </span>
       </div>
     </main>
-    <script src="./index.js"></script>
 
+    <script src="./index.js"></script>
   </body>
 </html>
