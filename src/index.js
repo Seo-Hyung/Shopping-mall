@@ -17,7 +17,8 @@ api.interceptors.request.use(function(config) {
 
 const headerEl = document.querySelector(".header");
 const rootEl = document.querySelector(".root");
-let cartLists;
+let cartLists; //장바구니 리스트 변수
+
 const templates = {
   titleForm: document.querySelector("#title-form").content,
   loginForm: document.querySelector("#login-form").content,
@@ -35,25 +36,29 @@ const templates = {
   orderedItemDetail: document.querySelector("#ordered-item-detail").content
 };
 
+// 타이틀 그리기
 function drawTitleForm() {
   const fragment = document.importNode(templates.titleForm, true);
   const titleFormEl = fragment.querySelector(".title-form");
   titleFormEl.addEventListener("click", e => {
+    e.preventDefault();
     drawScreen(null);
   });
   headerEl.textContent = "";
   headerEl.appendChild(titleFormEl);
 }
+
 // 로그인 폼 그리기
 async function drawLoginForm() {
   const fragment = document.importNode(templates.loginForm, true);
   const loginFormEl = fragment.querySelector(".login-form");
   const registerButtonEl = fragment.querySelector(".register-button");
-
+  // 회원가입 버튼
   registerButtonEl.addEventListener("click", e => {
     e.preventDefault();
     drawRegisterForm();
   });
+  // 로그인 버튼
   loginFormEl.addEventListener("submit", async e => {
     e.preventDefault();
     const username = e.target.elements.username.value;
@@ -62,27 +67,18 @@ async function drawLoginForm() {
       username,
       password
     });
-    console.log("로그인 token : " + res.data.token);
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("loginUser", username);
     drawScreen(null);
   });
-
-  // 문서 삽입
   headerEl.appendChild(fragment);
 }
 
 // 메인 화면에 카테고리별로 상품 리스트 그리기
 async function drawProductList(productData) {
   const fragment = document.importNode(templates.productListForm, true);
-  // const fragment2 = document.importNode(templates.productForm, true);
   const productListEl = fragment.querySelector(".product-list");
   const categoryLists = fragment.querySelectorAll("li");
-  const scarfEl = fragment.querySelector(".scarf");
-  const pantsEl = fragment.querySelector(".pants");
-  const shirtsEl = fragment.querySelector(".shirts");
-  const knitwearEl = fragment.querySelector(".knitwear");
-  const allEl = fragment.querySelector(".all");
 
   // 상품 화면에 그리기
   for (const product of productData) {
@@ -110,6 +106,8 @@ async function drawProductList(productData) {
     });
     productListEl.appendChild(fragment);
   }
+
+  // 카테고리 그리기
   categoryLists.forEach(item => {
     item.addEventListener("mouseover", e => {
       item.style.borderBottom = "1px solid #000";
@@ -117,74 +115,23 @@ async function drawProductList(productData) {
     item.addEventListener("mouseleave", e => {
       item.style.borderBottom = "1px solid rgba(0, 0, 0, 0)";
     });
-  });
-
-  // 전체보기
-  allEl.addEventListener("click", async e => {
-    e.preventDefault();
-    const res = await api.get("/products");
-    const productData = res.data;
-    drawScreen(productData);
-  });
-
-  // scarf
-  scarfEl.addEventListener("click", async e => {
-    e.preventDefault();
-
-    const res = await api.get("/products", {
-      params: {
-        category: "scarf"
+    item.addEventListener("click", async e => {
+      e.preventDefault();
+      const category = item.textContent;
+      const res = await api.get("/products");
+      let productData = res.data;
+      if (category !== "all") {
+        productData = productData.filter(item => item.category === category);
       }
+      drawScreen(productData);
     });
-    const productData = res.data;
-    drawScreen(productData);
   });
 
-  // shirts
-  shirtsEl.addEventListener("click", async e => {
-    e.preventDefault();
-
-    const res = await api.get("/products", {
-      params: {
-        category: "shirts"
-      }
-    });
-    const productData = res.data;
-    drawScreen(productData);
-  });
-
-  // pants
-  pantsEl.addEventListener("click", async e => {
-    e.preventDefault();
-    pantsEl.classList.add("category-clicked");
-    const res = await api.get("/products", {
-      params: {
-        category: "pants"
-      }
-    });
-    const productData = res.data;
-
-    drawScreen(productData);
-  });
-  // knitwear
-  knitwearEl.addEventListener("click", async e => {
-    e.preventDefault();
-    knitwearEl.classList.add("category-clicked");
-    const res = await api.get("/products", {
-      params: {
-        category: "knitwear"
-      }
-    });
-    const productData = res.data;
-
-    drawScreen(productData);
-  });
-
-  // 문서 삽입
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
 }
 
+// 상품 상세 페이지 그리기
 async function drawProductDetail(postId) {
   const fragment = document.importNode(templates.productDetail, true);
   const title = fragment.querySelector(".title");
@@ -333,14 +280,14 @@ async function drawCartForm() {
     image.src = id.mainImgUrl;
 
     // 수량 변경 시
-    quantity.addEventListener("change", async e=>{
+    quantity.addEventListener("change", async e => {
       e.preventDefault();
-      await api.patch('/cartItems/' + item.id, {
-        quantity : quantity.value
-      })
+      await api.patch("/cartItems/" + item.id, {
+        quantity: quantity.value
+      });
 
       drawCartForm();
-    })
+    });
 
     cartItemArr.push(cartItem);
     cartFormEl.appendChild(fragment);
@@ -362,33 +309,31 @@ async function drawCartForm() {
   orderButton.addEventListener("click", async e => {
     e.preventDefault();
 
-    if(!cartItemArr[0]){
-      alert('장바구니가 비어있습니다.')
-    } else{
+    if (!cartItemArr[0]) {
+      alert("장바구니가 비어있습니다.");
+    } else {
+      const res = await api.post("/orders", {
+        orderTime: Date.now() // 현재 시각을 나타내는 정수
+      });
 
-    const res = await api.post("/orders", {
-      orderTime: Date.now() // 현재 시각을 나타내는 정수
-    });
+      const orderId = res.data.id;
 
-    const orderId = res.data.id;
+      // 실험 코드
+      for (const item of cartItemArr) {
+        if (item.firstElementChild.checked) {
+          const patchId = item.firstElementChild.value;
 
-    // 실험 코드
-    for (const item of cartItemArr) {
-      if (item.firstElementChild.checked) {
-        const patchId = item.firstElementChild.value;
-
-        // 위에서 만든 주문 객체의 id를 장바구니 항목의 orderId에 넣어줍니다.
-        await api.patch("/cartItems/" + patchId, {
-          ordered: true,
-          orderId
-        });
+          // 위에서 만든 주문 객체의 id를 장바구니 항목의 orderId에 넣어줍니다.
+          await api.patch("/cartItems/" + patchId, {
+            ordered: true,
+            orderId
+          });
+        }
       }
+      //
+
+      drawOrderedForm();
     }
-    //
-
-    drawOrderedForm();
-
-  }
   });
 
   deleteButton.addEventListener("click", async e => {
@@ -423,8 +368,6 @@ async function drawOrderedForm() {
   params.append("_expand", "product");
   params.append("ordered", true);
   orderList.forEach(c => {
-
-
     for (const item of c.cartItems) {
       params.append("id", item.optionId);
       console.log(item.optionId);
@@ -503,8 +446,8 @@ function drawRegisterForm() {
     console.log(username.value);
 
     const res = await api.get("/users", {
-      params : {
-      username : username.value
+      params: {
+        username: username.value
       }
     });
     console.log(res.data);
@@ -512,7 +455,7 @@ function drawRegisterForm() {
       alert("이미 사용중인 아이디입니다.");
       validate = false;
     } else {
-      alert("사용 가능한 아이디입니다.")
+      alert("사용 가능한 아이디입니다.");
       validate = true;
     }
   });
@@ -565,6 +508,7 @@ async function drawMyPageForm() {
   logout.addEventListener("click", e => {
     localStorage.removeItem("token");
     localStorage.removeItem("loginUser");
+    cartLists = [];
     drawScreen(null);
   });
   orderedList.addEventListener("click", e => {
