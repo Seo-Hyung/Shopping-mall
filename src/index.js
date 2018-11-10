@@ -331,6 +331,17 @@ async function drawCartForm() {
     const id = idList.find(i => i.id === item.option.productId);
     title.textContent = id.title;
     image.src = id.mainImgUrl;
+
+    // 수량 변경 시
+    quantity.addEventListener("change", async e=>{
+      e.preventDefault;
+      api.patch('/cartItems/' + item.id, {
+        quantity : quantity.value
+      })
+      drawCartForm();
+
+    })
+
     cartItemArr.push(cartItem);
     cartFormEl.appendChild(fragment);
   }
