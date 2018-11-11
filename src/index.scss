@@ -181,10 +181,30 @@ body {
     transition: all 0.2s;
   }
 }
+// 페이지네이션
+.pagination{
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  display: inline-block;
+  margin: 5% 0;
+  span{
+    padding: 3px 1%;
+    margin: 1%;
+    cursor: pointer;
+    color: $point-color;
+  }
+}
+.page-clicked{
+  color: $point-color;
+  font-weight: bold;
+  font-size: 120%;
+  border-bottom: 1px solid $point-color;
+}
 // 상품 리스트
 .product-list-form {
   margin: 0 auto;
-  margin-bottom: 5%;
+  margin-bottom: 3%;
   .product-list {
     box-sizing: content-box;
   }
@@ -459,6 +479,12 @@ body {
   // 상품 리스트 하나하나
   .product-form {
     width: 40%;
+  }
+  // 페이지네이션
+  .pagination{
+    span{
+      margin: 5%;
+    }
   }
   // 상품 상세
   .product-detail {
