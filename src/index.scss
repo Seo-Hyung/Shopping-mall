@@ -222,32 +222,33 @@ a:visited {
 .product-detail {
   width: 80%;
   margin: 12vh auto;
-  // border: 1px solid purple;
+  border: 1px solid purple;
   display: flex;
   justify-content: center;
   font-size: 110%;
   .product-option-form {
     display: flex;
     flex-direction: column;
-    // border: 1px solid orange;
-    margin-top: 30px;
+    border: 1px solid orange;
+    margin-top: 5vh;
   }
   button {
     padding: 10px;
     font-size: 100%;
   }
   .detail-info {
-    // border: 1px solid red;
+    border: 1px solid red;
     display: flex;
     flex-direction: column;
     width: 40%;
     // margin: 5vh;
     .title {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      // margin: 5vh 0;
     }
     label{
       font-size: 1.5rem;
-      // border: 1px solid black;
+      border: 1px solid black;
       display: flex;
       justify-content: space-between;
     }
@@ -258,7 +259,9 @@ a:visited {
         padding: 5px;
     }
     .description{
-      // border: 1px solid green;
+      border: 1px solid green;
+      font-size: 1.1rem;
+      // margin: 5vh 0;
     }
   }
   .detail-image {
@@ -368,7 +371,9 @@ a:visited {
   z-index: 10;
 }
 .loading__element {
-  font: normal 100 2rem/1 Roboto;
+  // font: normal 100 2rem/1 Roboto;
+  font-family: inherit;
+  font-size: 150%;
   letter-spacing: 0.5em;
 }
 [class*="zz"] {
