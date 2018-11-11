@@ -70,16 +70,21 @@ async function drawLoginForm() {
   // 로그인 버튼
   loginFormEl.addEventListener("submit", async e => {
     e.preventDefault();
-
     const username = e.target.elements.username.value;
     const password = e.target.elements.password.value;
-    const res = await api.post("/users/login", {
-      username,
-      password
-    });
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("loginUser", username);
-    drawScreen(null);
+    const res2 = await api.get("/users");
+    const userList = res2.data;
+    if (userList.every(user => username !== user.username)) {
+      alert("회원 정보가 없습니다.\n회원가입 후 이용해주세요.");
+    } else {
+      const res = await api.post("/users/login", {
+        username,
+        password
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("loginUser", username);
+      drawScreen(null);
+    }
   });
 
   headerEl.appendChild(fragment);
@@ -457,7 +462,7 @@ async function drawCartForm() {
 }
 
 // 최종 가격 그리기
-function drawTotalPrice(totalPrice){
+function drawTotalPrice(totalPrice) {
   let totalP = 0;
   for (const item of cartItemChecked) {
     const temp = cartLists.find(i => i.id === item);
@@ -587,7 +592,7 @@ function drawRegisterForm() {
       const password = e.target.elements.newpassword.value;
       localStorage.setItem("loginUser", username);
       localStorage.setItem("token", "token");
-      headerEl.textContent="";
+      headerEl.textContent = "";
       drawTitleForm();
       drawMyPageForm();
       drawRegisterSuccess(username);
