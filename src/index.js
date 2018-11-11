@@ -382,32 +382,27 @@ async function drawCartForm() {
         }
       }
 
-      drawCartForm();
+      drawTotalPrice(totalPrice);
       loadingScreen.style.display = "none";
     });
 
     // 수량 변경 시
     quantity.addEventListener("change", async e => {
-      loadingScreen.style.display = "flex";
-      e.preventDefault();
+      // 낙관적 업데이트 이용
+      // e.preventDefault();
+      item.quantity = e.target.value;
+      drawTotalPrice(totalPrice);
+
       await api.patch("/cartItems/" + item.id, {
         quantity: quantity.value
       });
-
-      drawCartForm();
-      loadingScreen.style.display = "none";
     });
 
     cartFormEl.appendChild(fragment);
   }
 
   // 최종 가격 그리기
-  let totalP = 0;
-  for (const item of cartItemChecked) {
-    const temp = cartLists.find(i => i.id === item);
-    totalP = totalP + temp.quantity * temp.option.price;
-  }
-  totalPrice.textContent = "Total Price : £ " + totalP + ".00";
+  drawTotalPrice(totalPrice);
 
   // 쇼핑 계속하기 버튼
   continueButton.addEventListener("click", e => {
@@ -459,6 +454,16 @@ async function drawCartForm() {
 
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
+}
+
+// 최종 가격 그리기
+function drawTotalPrice(totalPrice){
+  let totalP = 0;
+  for (const item of cartItemChecked) {
+    const temp = cartLists.find(i => i.id === item);
+    totalP = totalP + temp.quantity * temp.option.price;
+  }
+  totalPrice.textContent = "Total Price : £ " + totalP + ".00";
 }
 
 // 주문내역 그리기
@@ -515,6 +520,12 @@ async function drawOrderedForm() {
     deleteButton.addEventListener("click", async e => {
       loadingScreen.style.display = "flex";
       await api.delete("/orders/" + search.id);
+      // 낙관적 업데이트를 위한 코드
+      // for(let i=0; i<orderList.length; i++){
+      //   if(orderList[i].id === e.target.id){
+      //     orderList.splice(i, 1);
+      //   }
+      // }
       drawOrderedForm();
       loadingScreen.style.display = "none";
     });
@@ -544,7 +555,7 @@ async function drawOrderedForm() {
 
 // 회원가입 폼 그리기
 function drawRegisterForm() {
-  loadingScreen.style.display = "flex";
+  // loadingScreen.style.display = "flex";
   const fragment = document.importNode(templates.registerForm, true);
   const registerForm = fragment.querySelector(".user-register-form");
   const checkId = fragment.querySelector(".check-id");
@@ -570,17 +581,25 @@ function drawRegisterForm() {
   // 가입 완료 버튼
   registerForm.addEventListener("submit", async e => {
     e.preventDefault();
+    // 낙관적 업데이트 이용
     if (validate) {
-      loadingScreen.style.display = "flex";
       const username = e.target.elements.newname.value;
       const password = e.target.elements.newpassword.value;
+      localStorage.setItem("loginUser", username);
+      localStorage.setItem("token", "token");
+      headerEl.textContent="";
+      drawTitleForm();
+      drawMyPageForm();
+      drawRegisterSuccess(username);
       await api.post("/users/register", {
         username,
         password
       });
-      localStorage.setItem("loginUser", username);
-      drawRegisterSuccess(username);
-      loadingScreen.style.display = "none";
+      const res = await api.post("/users/login", {
+        username,
+        password
+      });
+      localStorage.setItem("token", res.data.token);
     } else {
       alert("아이디 중복 체크를 해주세요.");
     }
@@ -588,7 +607,6 @@ function drawRegisterForm() {
 
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
-  loadingScreen.style.display = "none";
 }
 
 // 회원가입 성공 화면 그리기
