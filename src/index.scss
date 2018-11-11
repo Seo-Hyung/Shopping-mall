@@ -431,6 +431,9 @@ a:visited {
       display: block;
       padding: 3%;
     }
+    button{
+
+    }
   }
   .login-form,
   .my-page-form {
@@ -468,9 +471,18 @@ a:visited {
     display: block;
     width: 90%;
     .title{
-      margin: 3%;
       display: block;
       width: 100%;
+    }
+    span, input[type="number"]{
+      margin: 5%;
+    }
+    input[type="checkbox"]{
+      transform: scale(1);
+    }
+    .image{
+      height: 50%;
+      width: 50%;
     }
   }
   .ordered-form,
@@ -485,10 +497,11 @@ a:visited {
     input[type="password"], input[type="text"], button{
       display: block;
       width: 70%;
+      height: 1.5rem;
     }
   }
   .register-success-form{
-    margin:8%;
+    margin:0;
     .welcome{
       font-size: 120%;
     }
