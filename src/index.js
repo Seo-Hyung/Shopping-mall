@@ -98,7 +98,7 @@ async function drawMyPageForm() {
 	// 장바구니 가기 버튼
 	goToCart.addEventListener("click", async e => {
     loadingScreen.style.display = "flex";
-		e.preventDefault();
+    e.preventDefault();
 		await drawCartForm();
     loadingScreen.style.display = "none";
 	});
@@ -210,7 +210,7 @@ async function drawProductDetail(postId) {
 	optionsEl.forEach(item => {
 		const fragment = document.importNode(templates.productOptionForm, true);
 		const optionEl = fragment.querySelector(".option");
-		optionEl.textContent = `${item.title} (${item.price}$)`;
+		optionEl.textContent = `${item.title} (£${item.price}.00)`;
 		optionEl.setAttribute("value", item.id);
 		optionList.appendChild(fragment);
 	});
@@ -273,22 +273,21 @@ async function drawProductDetail(postId) {
 
 // 장바구니 리스트 가져오기
 async function getCartList() {
-	const username = localStorage.getItem("loginUser", username);
+  const username = localStorage.getItem("loginUser", username);
 	const userRes = await api.get("/users", {
 		params: {
 			username
 		}
-	});
+  });
 	const res = await api.get("/cartItems", {
 		params: {
 			ordered: false,
 			userId: userRes.data[0].id,
 			_expand: "option"
 		}
-	});
+  });
 
   cartLists = res.data;
-
 }
 
 // 장바구니 그리기
@@ -309,7 +308,7 @@ async function drawCartForm() {
 	const res2 = await api.get("/products", {
 		params
 	});
-	const idList = res2.data;
+  const idList = res2.data;
 
 	// 장바구니 아이템 하나씩 추가
 	for (const item of cartLists) {
@@ -323,7 +322,7 @@ async function drawCartForm() {
 
 		checkBox.setAttribute("value", item.id);
 		option.textContent = item.option.title;
-		price.textContent = item.option.price + "$";
+		price.textContent = "£" + item.option.price + ".00";
 		quantity.value = item.quantity;
 		const id = idList.find(i => i.id === item.option.productId);
 		title.textContent = id.title;
@@ -337,7 +336,6 @@ async function drawCartForm() {
 		// 장바구니 체크박스 핸들
 		checkBox.addEventListener("input", e => {
       loadingScreen.style.display = "flex";
-      console.log('췍췍')
 			e.preventDefault();
 			if (e.target.checked) {
 				const temp = cartItemChecked.every(item => item !== e.target.value);
@@ -379,7 +377,7 @@ async function drawCartForm() {
 		const temp = cartLists.find(i => i.id === item);
 		totalP = totalP + temp.quantity * temp.option.price;
 	}
-	totalPrice.textContent = "Total Price : " + totalP + " $";
+	totalPrice.textContent = "Total Price : £ " + totalP + ".00";
 
 	// 쇼핑 계속하기 버튼
 	continueButton.addEventListener("click", e => {
@@ -501,7 +499,7 @@ async function drawOrderedForm() {
 
 			optionEl.textContent = item.title;
 			quantity.textContent = item.cartItems;
-			price.textContent = item.price+"$ (1ea)";
+			price.textContent = "£" + item.price+".00 (1ea)";
 
 			title.textContent = item.product.title;
 			image.src = item.product.mainImgUrl;
