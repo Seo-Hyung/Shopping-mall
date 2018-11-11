@@ -339,7 +339,6 @@ body {
     line-height: 80px;
   }
   .image {
-    // border: 1px solid green;
     width: 80px;
     height: 100%;
   }
@@ -348,10 +347,10 @@ body {
 // 푸터
 .footer {
   height: 10%;
-  background-color: #000;
+  background-color: #111;
   color: #ccc;
   text-align: center;
-  border-top: 5px solid #000;
+  border-top: 5px solid #111;
 }
 
 // 로딩 스크린
@@ -431,7 +430,6 @@ body {
   }
   // 회원가입
   .user-register-form {
-    border: 1px solid red;
     margin: 8% auto;
     align-items: center;
     input[type="password"],
@@ -444,7 +442,6 @@ body {
   }
   // 회원가입 성공
   .register-success-form {
-    border: 1px solid red;
     margin: 8% auto;
     .welcome {
       font-size: 120%;
