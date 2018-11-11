@@ -422,14 +422,20 @@ a:visited {
 
 @media ( max-width: 768px ) {
   .header{
-    display: block;
+    display: flex;
+    flex-direction: column;
     text-align: center;
     height: fit-content;
     padding: 3%;
+    span{
+      display: block;
+      padding: 3%;
+    }
   }
   .login-form,
   .my-page-form {
     display: block;
+    white-space: normal;
     padding: 3%;
   }
   .product-form{
@@ -446,6 +452,15 @@ a:visited {
     text-align: center;
     li{
       padding: 3%;
+    }
+  }
+  .cart-item{
+    display: block;
+    width: 90%;
+    .title{
+      margin: 3%;
+      display: block;
+      width: 100%;
     }
   }
   .ordered-form,
