@@ -210,7 +210,7 @@ async function drawProductDetail(postId) {
 	optionsEl.forEach(item => {
 		const fragment = document.importNode(templates.productOptionForm, true);
 		const optionEl = fragment.querySelector(".option");
-		optionEl.textContent = `${item.title} - ${item.price}₩`;
+		optionEl.textContent = `${item.title} (${item.price}$)`;
 		optionEl.setAttribute("value", item.id);
 		optionList.appendChild(fragment);
 	});
@@ -323,7 +323,7 @@ async function drawCartForm() {
 
 		checkBox.setAttribute("value", item.id);
 		option.textContent = item.option.title;
-		price.textContent = item.option.price;
+		price.textContent = item.option.price + "$";
 		quantity.value = item.quantity;
 		const id = idList.find(i => i.id === item.option.productId);
 		title.textContent = id.title;
@@ -379,7 +379,7 @@ async function drawCartForm() {
 		const temp = cartLists.find(i => i.id === item);
 		totalP = totalP + temp.quantity * temp.option.price;
 	}
-	totalPrice.textContent = "Total Price : " + totalP;
+	totalPrice.textContent = "Total Price : " + totalP + " $";
 
 	// 쇼핑 계속하기 버튼
 	continueButton.addEventListener("click", e => {
@@ -501,7 +501,7 @@ async function drawOrderedForm() {
 
 			optionEl.textContent = item.title;
 			quantity.textContent = item.cartItems;
-			price.textContent = item.price;
+			price.textContent = item.price+"$ (1ea)";
 
 			title.textContent = item.product.title;
 			image.src = item.product.mainImgUrl;

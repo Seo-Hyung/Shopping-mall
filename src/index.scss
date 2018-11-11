@@ -105,7 +105,7 @@ a:visited {
 
 .login-form,
 .my-page-form {
-  border: 1px solid red;
+  // border: 1px solid red;
   width: 50%;
   height: fit-content;
   align-items: center;
@@ -151,6 +151,7 @@ a:visited {
     border: 1px solid $point-color;
     box-sizing: border-box;
     padding-left: 5px;
+    width: 100%;
   }
 }
 
@@ -165,8 +166,6 @@ a:visited {
     font-size: 300%;
   }
   button {
-    padding: 4vh 8vh;
-    line-height: 8vh;
     border: 1px solid $point-color;
   }
 }
@@ -235,7 +234,7 @@ a:visited {
 .product-detail {
   width: 80%;
   margin: 12vh auto;
-  border: 1px solid purple;
+  // border: 1px solid purple;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -243,7 +242,7 @@ a:visited {
   .product-option-form {
     display: flex;
     flex-direction: column;
-    border: 1px solid orange;
+    // border: 1px solid orange;
     // margin-top: 5vh;
     margin: 3% 0;
   }
@@ -252,7 +251,7 @@ a:visited {
     font-size: 100%;
   }
   .detail-info {
-    border: 1px solid red;
+    // border: 1px solid red;
     display: flex;
     flex-direction: column;
     width: 40%;
@@ -265,7 +264,7 @@ a:visited {
     }
     label{
       font-size: 1.5rem;
-      border: 1px solid black;
+      // border: 1px solid black;
       display: flex;
       justify-content: space-between;
     }
@@ -279,7 +278,7 @@ a:visited {
       width: 100%;
     }
     .description{
-      border: 1px solid green;
+      // border: 1px solid green;
       font-size: 1.2rem;
       margin-top: 5vh;
     }
@@ -287,7 +286,7 @@ a:visited {
   .detail-image {
     width: 40%;
     height: 100%;
-    border: 1px solid orange;
+    // border: 1px solid orange;
     margin-right: 3%;
   }
 }
@@ -299,15 +298,18 @@ a:visited {
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #000;
+  font-size: 1.2rem;
   .image {
     width: 20%;
     padding: 5px;
   }
-  .check-delete {
-    height: 10px;
-    width: 10px;
-    transform: scale(2);
-    cursor: pointer;
+  .quantity{
+
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  input[type="checkbox"]{
+      transform: scale(2);
   }
 }
 
@@ -317,11 +319,7 @@ a:visited {
   margin: 0 auto;
   text-align: center;
   padding-bottom: 5vh;
-  .continue-shopping,
-  .order-button,
-  .delete {
-    padding: 5px;
-  }
+
 }
 .cart-form-title,
 .ordered-form-title {
@@ -334,18 +332,13 @@ a:visited {
 .ordered-form-item {
   padding: 5vh 0;
   border-top: 1px solid #000;
+  font-weight: bold;
   .ordered-form-item-ul {
+    font-weight: normal;
     list-style: none;
     margin-top: 2%;
   }
 }
-// .cart-form-ul{
-//   width: 100%;
-//   display: flex;
-//   justify-content: space-between;
-
-//   border: 1px solid orange;
-// }
 
 .ordered-item-detail {
   margin: 0 auto;
