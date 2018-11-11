@@ -82,11 +82,14 @@ a:visited {
   padding: 0 5vw;
   background-color: #fff;
 }
-.title-form > h1 {
+.title-form{
+
+  .shopping-mall-title {
+    text-transform: uppercase;
   height: 100%;
-  // line-height: 10vh;
   box-sizing: border-box;
   cursor: pointer;
+  }
 }
 
 .root {
@@ -97,14 +100,6 @@ a:visited {
   box-sizing: border-box;
 }
 
-.shopping-mall-title {
-  text-transform: uppercase;
-}
-
-.welcome {
-  text-align: center;
-  font-size: 300%;
-}
 .login-form,
 .my-page-form {
   display: inline;
@@ -151,6 +146,10 @@ a:visited {
   font-size: 200%;
   line-height: 10vh;
   margin: 20vh auto;
+  .welcome {
+    text-align: center;
+    font-size: 300%;
+  }
   button {
     height: 10vh;
     width: 10vw;
@@ -182,44 +181,43 @@ a:visited {
   width: 85%;
 }
 .product-list-form {
-  // border: 2px solid orange;
   margin: 0 auto;
-}
-.product-list {
-  // border: 1px solid pink;
-  box-sizing: content-box;
+  .product-list {
+    // border: 1px solid pink;
+    box-sizing: content-box;
+  }
 }
 
 .product-form {
   position: relative;
   // border: 1px solid #ccc;
   width: 20%;
-  margin: 0 2% 1%;
+  margin: 2% 2% 1%;
   display: inline-block;
   box-sizing: border-box;
   cursor: pointer;
   align-items: center;
+  transition: all ease-in 1s;
   .image {
     width: 100%;
   }
 
-  transition: all ease-in 1s;
+  .cover {
+    background-color: rgba(245, 245, 245, 0);
+    color: rgba(6, 6, 6, 0);
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding-top: 40%;
+    transition: all 0.2s;
+    content: "tets";
+  }
 }
 
-.cover {
-  background-color: rgba(245, 245, 245, 0);
-  color: rgba(6, 6, 6, 0);
-  position: absolute;
-  display: block;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  padding-top: 40%;
-  transition: all 0.2s;
-  content: "tets";
-}
 
 .product-detail {
   width: 80%;
@@ -231,27 +229,36 @@ a:visited {
   .product-option-form {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    // border: 1px solid red;
+    // border: 1px solid orange;
+    margin-top: 30px;
   }
   button {
     padding: 10px;
-  }
-  input,
-  select {
-    border: 1px solid $point-color;
-    width: 40%;
-    padding: 5px;
+    font-size: 100%;
   }
   .detail-info {
     // border: 1px solid red;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     width: 40%;
-    margin: 5vh;
+    // margin: 5vh;
     .title {
-      font-size: 200%;
+      font-size: 2rem;
+    }
+    label{
+      font-size: 1.5rem;
+      // border: 1px solid black;
+      display: flex;
+      justify-content: space-between;
+    }
+    select, input{
+      font-size: 1rem;
+        border: 1px solid $point-color;
+        width: 60%;
+        padding: 5px;
+    }
+    .description{
+      // border: 1px solid green;
     }
   }
   .detail-image {
@@ -260,6 +267,8 @@ a:visited {
     // border: 1px solid orange;
   }
 }
+
+
 .cart-item {
   width: 100%;
   display: flex;
