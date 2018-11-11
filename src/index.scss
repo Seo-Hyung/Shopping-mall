@@ -120,7 +120,7 @@ a:visited {
     width: 150px;
     padding: 1% 2%;
     margin: 0 1%;
-    padding-left: 5px;
+    // padding-left: 5px;
     box-sizing: border-box;
   }
 }
@@ -435,8 +435,18 @@ a:visited {
   .login-form,
   .my-page-form {
     display: block;
-    white-space: normal;
-    padding: 3%;
+    text-align: center;
+    margin: 3%;
+    // white-space: normal;
+    // border: 1px solid red;
+    // padding: 3%;
+  }
+  .login-form{
+    input[type="password"], input[type="text"]{
+      display: block;
+      width: 95%;
+      margin: 3%;
+    }
   }
   .product-form{
     width: 40%;
@@ -464,8 +474,24 @@ a:visited {
     }
   }
   .ordered-form,
-  .cart-form, .ordered-item-detail {
+  .cart-form, .ordered-item-detail, .user-register-form {
     width: 90%;
+  }
+  .user-register-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    input[type="password"], input[type="text"], button{
+      display: block;
+      width: 70%;
+    }
+  }
+  .register-success-form{
+    margin:8%;
+    .welcome{
+      font-size: 120%;
+    }
   }
 }
 
