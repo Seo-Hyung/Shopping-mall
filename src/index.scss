@@ -333,11 +333,16 @@ a:visited {
   padding: 5vh 0;
   border-top: 1px solid #000;
   font-weight: bold;
+  font-size: 1.2rem;
   .ordered-form-item-ul {
     font-weight: normal;
     list-style: none;
     margin-top: 2%;
   }
+}
+
+.total-price{
+  margin: 1%;
 }
 
 .ordered-item-detail {
