@@ -18,3 +18,7 @@
 1. 내려받은 폴더로 이동한 후, `rm -rf .git` 명령을 실행한다.
 1. `git init`, `git add .`, `git commit -m "..."` 명령을 차례로 실행한다. (저장소 초기화)
 1. Github에서 새 저장소를 만든 후, 위에서 초기화한 저장소를 푸시한다.
+
+## 구현
+
+- [쇼핑몰 프로젝트 바로가기](https://shopping-mall-westbro.netlify.com/)
