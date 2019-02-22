@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 // 로그인 시 유지시키는 코드
-api.interceptors.request.use(function(config) {
+api.interceptors.request.use(function (config) {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers = config.headers || {};
@@ -24,6 +24,13 @@ let cartItemChecked = []; // 장바구니 체크된 리스트 변수
 // Todo:
 // 1. 코드 중복 제거
 // 2. 변수 이름 규칙적으로
+
+// const routes = {
+//   '/': home,
+//   '/top': top,
+//   '/my-cart': myCart,
+//   '/order-list': orderList,
+// };
 
 const templates = {
   titleForm: document.querySelector("#title-form").content,
@@ -303,6 +310,7 @@ async function drawProductDetail(postId) {
 
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
+  // history.pushState({ data: 'detail' }, 'Detail', '/product-detail');
   loadingScreen.style.display = "none";
 }
 
@@ -457,6 +465,7 @@ async function drawCartForm() {
     }
   });
 
+  // history.pushState({ data: 'my-cart' }, 'My Cart', '/my-cart');
   rootEl.textContent = "";
   rootEl.appendChild(fragment);
 }
